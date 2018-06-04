@@ -22,6 +22,7 @@ class Inn_Reservations{
 			switch (sel){
 				case 1:
 					System.out.println("Option 1: Show Rooms and Rates");
+					System.out.println(contruct_req1_sql_statement());
 				    break;
 				case 2:
 					System.out.println("Option 2: Make a Reservation");
@@ -135,6 +136,22 @@ class Inn_Reservations{
 		input = reader.nextInt(); 
 
 		return input; 
+	}
+
+	public static String contruct_req1_sql_statement(){
+		String statement = "SELECT * FROM reservations"; 
+	}
+
+	public static String contruct_req2_sql_statement(){
+			
+	}
+
+	public static String contruct_req3_sql_statement(){
+			
+	}
+
+	public static String contruct_req4_sql_statement(){
+			
 	}
 
 	public static String contruct_req5_sql_statement(ArrayList<String> inputs){
