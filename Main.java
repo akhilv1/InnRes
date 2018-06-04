@@ -17,26 +17,28 @@ class Inn_Reservations{
 			System.out.println("7: Exit\n");
 			System.out.print("Choose an Option: ");
 
-			//hello akhil
 			sel = reader.nextInt();
+			ArrayList<String> inputs;
 			switch (sel){
 				case 1:
 					System.out.println("Option 1: Show Rooms and Rates");
 				    break;
 				case 2:
 					System.out.println("Option 2: Make a Reservation");
+					inputs = resInfo();
 					break;
 				case 3:
 					System.out.println("Option 3: Change a Reservation");
+					inputs = resInfo();
 				    break;
 				case 4:
 					System.out.println("Option 4: Cancel a Reservation");
+					inputs = resInfo();
 					break;
 				case 5:
 					System.out.println("Option 5: About a Reservation\n");
-
-					req5();
-
+					inputs = resInfo();
+					System.out.println(contruct_req5_sql_statement(inputs));
 				   	break;
 				case 6:
 					System.out.println("Option 6: Inn Revenue");
@@ -48,23 +50,21 @@ class Inn_Reservations{
 			}
 		}
 	}
-
-
-	public static void req5(){
+	
+	// General Info function that gets the standard reservation info from a user
+	public static ArrayList<String> resInfo(){
 		ArrayList<String> inputs = new ArrayList<String>(); 
 
 		for(int i = 0; i < 6; i++){
 			inputs.add("Empty");
 		}
 
-		int input; 
-
 		Scanner reader = new Scanner (System.in);
 		String userInput; 
 		boolean loop = true;
 
 		while(loop){
-			input = Ask_For_Option(inputs);
+			int input = Ask_For_Option(inputs);
 
 			switch(input){
 				case 1: //First Name, inputs(0)
@@ -82,7 +82,6 @@ class Inn_Reservations{
 					userInput = reader.nextLine();
 					inputs.set(2, userInput);
 
-
 					System.out.print("Enter a End Date (YYYY-MM-DD): ");
 					userInput = reader.nextLine();
 					inputs.set(3, userInput);
@@ -97,15 +96,13 @@ class Inn_Reservations{
 					userInput = reader.nextLine();
 					inputs.set(5, userInput);
 					break;
-				case 6: 	
-					System.out.println("Send data to SQL Statement");
-					loop = false; 
-					System.out.println(contruct_req5_sql_statement(inputs));
-					break;
+				case 6:
+					loop = false;
+					return inputs;
 			}
 		}
+		return null;
 	}
-
 
 	public static int Ask_For_Option(ArrayList<String> inputs){
 		System.out.println("Which Criteria would you like to search by:");
@@ -142,8 +139,6 @@ class Inn_Reservations{
 
 	public static String contruct_req5_sql_statement(ArrayList<String> inputs){
 		int numNonempties = 0;
-
-
 
 		for(int i = 0; i < 6; i++){
 			if(i == 3){
@@ -196,7 +191,7 @@ class Inn_Reservations{
 					statement = statement + "CheckOut >= '" + inputs.get(i) + "') OR ";
 
 					statement = statement + "(CheckIn >= '" + inputs.get(i) + "' AND ";
-					statement = statement + "CheckIn <= '" + inputs.get(i+1) + "') OR";
+					statement = statement + "CheckIn <= '" + inputs.get(i + 1) + "') OR";
 
 					statement = statement + "(CheckIn >= '" + inputs.get(i) + "' AND ";
 					statement = statement + "CheckOut <= '" + inputs.get(i + 1) + "'))";
