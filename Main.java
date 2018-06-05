@@ -108,11 +108,19 @@ class Inn_Reservations{
 					break;
 				case 6: //Numebr of Children,inputs(4)
 					System.out.print("Enter the number of Children: ");
-					res.children = reader.nextInt();
+					try {
+						res.children = reader.nextInt();
+					} catch (Exception InputMismatchException) {
+						System.out.println("Invalid Type");
+					}
 					break;
 				case 7: //Numebr of Adults,inputs(5)
 				System.out.print("Enter the number of Adults: ");
-					res.adults = reader.nextInt();
+					try {
+						res.adults = reader.nextInt();
+					} catch (Exception InputMismatchException) {
+						System.out.println("Invalid Type");
+					}
 					break;
 				case 8:
 					loop = false;
@@ -127,32 +135,13 @@ class Inn_Reservations{
 		Scanner reader = new Scanner (System.in);
 		
 		System.out.println("Choose a feild to edit:");
-		System.out.print("\t1: First Name:        ");
-		System.out.println(res.getFirst());
-		
-		System.out.print("\t2: Last Name:         ");
-		System.out.println(res.getLast());
-		
-		System.out.print("\t3: Desired Room:         ");
-		System.out.println(res.room);
-		
-		System.out.print("\t4: Desired Bed:         ");
-		System.out.println(res.bed);
-
-		System.out.print("\t5: Range of Dates:    ");
-		if(res.getEnd() == null){
-			System.out.println(res.getBegin());
-		}
-		else{
-			System.out.println(res.getBegin() + " - " + res.getEnd());
-		}
-
-		System.out.print("\t6: Number of Children:         ");
-		System.out.println(res.getChildren());
-
-		System.out.print("\t7: Number of Adults:  ");
-		System.out.println(res.getAdults());
-
+		System.out.printf("\t1: First Name: %s\n", res.getFirst());
+		System.out.printf("\t2: Last Name: %s\n", res.getLast());
+		System.out.printf("\t3: Desired Room: %s\n", res.room);
+		System.out.printf("\t4: Desired Bed: %s\n", res.bed);
+		System.out.printf("\t5: Range of Dates: %s - %s\n", res.getBegin(), res.getEnd());
+		System.out.printf("\t6: Number of Children: %i\n", res.getChildren());
+		System.out.printf("\t7: Number of Adults: %i\n", res.getAdults());
 		System.out.println("\t8: Confirm Reservation");
 
 		System.out.print("\nChoose which option to enter: ");
@@ -214,11 +203,19 @@ class Inn_Reservations{
 					break;
 				case 4: //Numebr of Children,inputs(4)
 					System.out.print("Enter the number of Children: ");
-					res.children = reader.nextInt();
+					try {
+						res.children = reader.nextInt();
+					} catch (Exception InputMismatchException) {
+						System.out.println("Invalid Type");
+					}
 					break;
 				case 5: //Numebr of Adults,inputs(5)
-				System.out.print("Enter the number of Adults: ");
-					res.adults = reader.nextInt();
+					System.out.print("Enter the number of Adults: ");
+					try {
+						res.adults = reader.nextInt();
+					} catch (Exception InputMismatchException) {
+						System.out.println("Invalid Type");
+					}
 					break;
 				case 6:
 					loop = false;
@@ -233,25 +230,12 @@ class Inn_Reservations{
 		Scanner reader = new Scanner (System.in);
 		
 		System.out.println("Choose a feild to edit:");
-		System.out.print("\t1: First Name:        ");
-		System.out.println(res.getFirst());
-		
-		System.out.print("\t2: Last Name:         ");
-		System.out.println(res.getLast());
-
-		System.out.print("\t3: Range of Dates:    ");
-		if(res.getEnd() == null){
-			System.out.println(res.getBegin());
-		}
-		else{
-			System.out.println(res.getBegin() + " - " + res.getEnd());
-		}
-
-		System.out.print("\t4: Number of Children:         ");
-		System.out.println(res.getChildren());
-
-		System.out.print("\t5: Number of Adults:  ");
-		System.out.println(res.getAdults());
+		System.out.printf("Reservation: %i\n", res.getCode());
+		System.out.printf("\t1: First Name: %s\n", res.getFirst());
+		System.out.printf("\t2: Last Name: %s\n", res.getLast());
+		System.out.printf("\t3: Range of Dates: %s - %s\n", res.getBegin(), res.getEnd());
+		System.out.printf("\t4: Number of Children: %i\n", res.getChildren());
+		System.out.printf("\t5: Number of Adults: %i\n", res.getAdults());
 
 		System.out.println("\t6: Confirm Reservation");
 
@@ -319,11 +303,11 @@ class Inn_Reservations{
 	public static void print_res(Reservation res){
 		// Display Res Info
 		System.out.printf("Reservation: %i\n", res.getCode());
-		System.out.printf("\t1: First Name: %s\n", res.getFirst());
-		System.out.printf("\t2: Last Name: %s\n", res.getLast());
-		System.out.printf("\t3: Range of Dates: %s - %s\n", res.getBegin(), res.getEnd());
-		System.out.printf("\t4: Number of Children: %i\n", res.getChildren());
-		System.out.printf("\t5: Number of Adults: %i\n", res.getAdults());
+		System.out.printf("\tFirst Name: %s\n", res.getFirst());
+		System.out.printf("\tLast Name: %s\n", res.getLast());
+		System.out.printf("\tRange of Dates: %s - %s\n", res.getBegin(), res.getEnd());
+		System.out.printf("\tNumber of Children: %i\n", res.getChildren());
+		System.out.printf("\tNumber of Adults: %i\n", res.getAdults());
 	}
 	
 	/* Requirement 5
