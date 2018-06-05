@@ -7,8 +7,9 @@ class Reservation{
 	public String end; 
 	public int children; 
 	public int adults;
-	public String room;
-	public String bed;
+	public String room; // User's Input
+	public String roomCode; // Generated Room
+	public String bed; // User's Input
 	public int code;
 
 	public Reservation(String first, String last, String room, 
@@ -20,15 +21,8 @@ class Reservation{
 		this.end = end;
 		this.children = children;
 		this.adults = adults;
-		
-		if(this.room == "Any") // TODO assign Empty rooms based on availability
-			this.room = "Any";
-		else
-			this.room = room;
-		if(this.bed == "Any") // TODO assign Bed
-			this.bed = "Any";
-		else
-			this.bed = bed;			
+		this.room = room;
+		this.bed = bed;				
 	}
 		
 	public Reservation(){
@@ -73,8 +67,12 @@ class Reservation{
 		return this.adults;
 	}
 		
-	public String getRoomCode(){
+	public String getRoom(){
 		return this.room;
+	}
+	
+	public String getBed(){
+		return this.bed;
 	}
 
 	public int getCode(){

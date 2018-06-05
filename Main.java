@@ -70,13 +70,111 @@ class Inn_Reservations{
 	 * Reservation Creation
 	 */
 	public static Reservation req2(){
+		Reservation res = new Reservation();
+
+		Scanner reader = new Scanner (System.in);
+		String userInput; 
+		boolean loop = true;
+
+		System.out.println("Make a Reservation: ");
+
+		while(loop){
+			int input = Ask_For_Option2(res);
+
+			switch(input){
+				case 1: //First Name, inputs(0)
+					System.out.print("Enter a First Name: ");
+					res.first = reader.nextLine();
+					break;
+				case 2: //Last Name, inputs(1)
+					System.out.print("Enter a Last Name: ");
+					res.last = reader.nextLine();
+					break;
+				case 3: //Desired Room
+					System.out.print("Enter a Desired Room: ");
+					res.room = reader.nextLine();
+					break;
+				case 4: //Desired Bed	
+					System.out.print("Enter a Desired Bed: ");
+					res.bed = reader.nextLine();
+					break;
+				case 5: //Date Range, Start Date = inputs(2), End Date = inputs(3)
+					// TODO type checking
+					System.out.print("Enter a Start Date (YYYY-MM-DD): ");
+					res.begin = reader.nextLine();
+
+					System.out.print("Enter a End Date (YYYY-MM-DD): ");
+					res.end = reader.nextLine();
+					break;
+				case 6: //Numebr of Children,inputs(4)
+					System.out.print("Enter the number of Children: ");
+					res.children = reader.nextInt();
+					break;
+				case 7: //Numebr of Adults,inputs(5)
+				System.out.print("Enter the number of Adults: ");
+					res.adults = reader.nextInt();
+					break;
+				case 8:
+					loop = false;
+					return res;
+			}
+		}
 		return null;
 	}
-
-	public static String contruct_req2_sql_statement(Reservation res){
-		String statement = "SELECT * FROM reservations"; 
+	
+	public static int Ask_For_Option2(Reservation res){
+		int input; 
+		Scanner reader = new Scanner (System.in);
 		
-		return statement + ";";
+		System.out.println("Choose a feild to edit:");
+		System.out.print("\t1: First Name:        ");
+		System.out.println(res.getFirst());
+		
+		System.out.print("\t2: Last Name:         ");
+		System.out.println(res.getLast());
+		
+		System.out.print("\t3: Desired Room:         ");
+		System.out.println(res.room);
+		
+		System.out.print("\t4: Desired Bed:         ");
+		System.out.println(res.bed);
+
+		System.out.print("\t5: Range of Dates:    ");
+		if(res.getEnd() == null){
+			System.out.println(res.getBegin());
+		}
+		else{
+			System.out.println(res.getBegin() + " - " + res.getEnd());
+		}
+
+		System.out.print("\t6: Number of Children:         ");
+		System.out.println(res.getChildren());
+
+		System.out.print("\t7: Number of Adults:  ");
+		System.out.println(res.getAdults());
+
+		System.out.println("\t8: Confirm Reservation");
+
+		System.out.print("\nChoose which option to enter: ");
+		input = reader.nextInt(); 
+
+		return input; 
+	}
+
+	// TODO generate Reservation Code
+	public static String contruct_req2_sql_statement(Reservation res){
+		String statement = "INSERT INTO Reservations (Code, Room, CheckIn, CheckOut, Rate, LastName, FirstName, Adults, Kids) VALUES (";
+		
+		statement += res.getCode() + ", ";
+		statement += "'" + res.getRoom() + "', ";
+		statement += "'" + res.getBegin() + "', ";
+		statement += "'" + res.getEnd() + "', ";
+		statement += "'" + res.getLast() + "', ";
+		statement += "'" + res.getFirst() + "', ";
+		statement += res.getAdults() + ", ";
+		statement += res.getChildren() + ");";
+		
+		return statement;
 	}
 	
 	/* Requirement 3
@@ -107,6 +205,7 @@ class Inn_Reservations{
 					res.last = reader.nextLine();
 					break;
 				case 3: //Date Range, Start Date = inputs(2), End Date = inputs(3)
+					// TODO type checking
 					System.out.print("Enter a Start Date (YYYY-MM-DD): ");
 					res.begin = reader.nextLine();
 
@@ -169,9 +268,9 @@ class Inn_Reservations{
 		statement += "LastName = '" + res.getLast() + "', ";
 		statement += "CheckIn = '" + res.getBegin() + "', ";
 		statement += "CheckOut = '" + res.getEnd() + "', ";
-		statement += "Children = '" + res.getChildren() + "', ";
-		statement += "Adults = '" + res.getAdults() + "' ";
-		statement += "WHERE Code = " + res.getCode();
+		statement += "Children = " + res.getChildren() + ", ";
+		statement += "Adults = " + res.getAdults();
+		statement += " WHERE Code = " + res.getCode();
 		
 		return statement + ";";
 	}
