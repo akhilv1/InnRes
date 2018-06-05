@@ -19,6 +19,7 @@ class Inn_Reservations{
 
 			sel = reader.nextInt();
 			ArrayList<String> inputs;
+			Reservation res;
 			switch (sel){
 				case 1:
 					System.out.println("Option 1: Show Rooms and Rates");
@@ -26,23 +27,26 @@ class Inn_Reservations{
 				    break;
 				case 2:
 					System.out.println("Option 2: Make a Reservation");
-					inputs = resInfo();
+					inputs = req2();
+					System.out.println(contruct_req2_sql_statement(inputs));
 					break;
 				case 3:
 					System.out.println("Option 3: Change a Reservation");
-					inputs = resInfo();
+					res = req3();
+					System.out.println(contruct_req3_sql_statement(res));
 				    break;
 				case 4:
 					System.out.println("Option 4: Cancel a Reservation");
-					inputs = resInfo();
+					System.out.println(req4());
 					break;
 				case 5:
 					System.out.println("Option 5: About a Reservation\n");
-					inputs = resInfo();
+					inputs = req5();
 					System.out.println(contruct_req5_sql_statement(inputs));
 				   	break;
 				case 6:
 					System.out.println("Option 6: Inn Revenue");
+					System.out.println(contruct_req6_sql_statement(inputs));
 					break;
 				case 7:
 					System.out.println("Thank you for using the Inn Reservation System");
@@ -52,8 +56,179 @@ class Inn_Reservations{
 		}
 	}
 	
-	// General Info function that gets the standard reservation info from a user
-	public static ArrayList<String> resInfo(){
+	/* Requirement 1
+	 * Rooms and Rates
+	 */
+
+	public static String contruct_req1_sql_statement(){
+		String statement = "SELECT * FROM reservations"; 
+		
+		return statement + ";";
+	}
+	
+	/* Requirement 2
+	 * Reservation Creation
+	 */
+
+	public static String contruct_req2_sql_statement(){
+		String statement = "SELECT * FROM reservations"; 
+		
+		return statement + ";";
+	}
+	
+	/* Requirement 3
+	 * Reservation Change
+	 */
+	
+	public static Reservation req3(){
+		Reservation res;
+
+		Scanner reader = new Scanner (System.in);
+		String userInput; 
+		boolean loop = true;
+
+		System.out.println("Please enter your reservation code to edit:");
+		int code = reader.nextInt();
+		res = fetch_res(code);
+
+		while(loop){
+			int input = Ask_For_Option3(inputs);
+
+			switch(input){
+				case 1: //First Name, inputs(0)
+					System.out.print("Enter a First Name: ");
+					res.first = reader.nextLine();
+					break;
+				case 2: //Last Name, inputs(1)
+					System.out.print("Enter a Last Name: ");
+					res.last = reader.nextLine();
+					break;
+				case 3: //Date Range, Start Date = inputs(2), End Date = inputs(3)
+					System.out.print("Enter a Start Date (YYYY-MM-DD): ");
+					res.begin = reader.nextLine();
+
+					System.out.print("Enter a End Date (YYYY-MM-DD): ");
+					res.end = reader.nextLine();
+					break;
+				case 4: //Numebr of Children,inputs(4)
+					System.out.print("Enter the number of Children: ");
+					res.children = reader.nextInt();
+					break;
+				case 5: //Numebr of Adults,inputs(5)
+				System.out.print("Enter the number of Adults: ");
+					res.adults = reader.nextInt();
+					break;
+				case 6:
+					loop = false;
+					return res;
+			}
+		}
+		return null;
+	}
+	
+	public static int Ask_For_Option3(Reservation res){
+		int input; 
+		Scanner reader = new Scanner (System.in);
+		
+		System.out.println("Choose a feild to edit:");
+		System.out.print("\t1: First Name:        ");
+		System.out.println(res.getFirst());
+		
+		System.out.print("\t2: Last Name:         ");
+		System.out.println(res.getLast());
+
+		System.out.print("\t3: Range of Dates:    ");
+		if(inputs.get(3) == "Empty"){
+			System.out.println(res.getBegin());
+		}
+		else{
+			System.out.println(res.getBegin() + " - " + res.getEnd());
+		}
+
+		System.out.print("\t4: Number of Children:         ");
+		System.out.println(res.getChildren());
+
+		System.out.print("\t5: Number of Adults:  ");
+		System.out.println(res.getAdults());
+
+		System.out.println("\t6: Confirm Reservation");
+
+		System.out.print("\nChoose which option to enter: ");
+		input = reader.nextInt(); 
+
+		return input; 
+	}
+
+	public static String contruct_req3_sql_statement(Reservation res){
+		String statement = "UPDATE Reservations SET ";
+		
+		statement += "FirstName = '" + res.getFirst() + "', ";
+		statement += "LastName = '" + res.getLast() + "', ";
+		statement += "CheckIn = '" + res.getBegin() + "', ";
+		statement += "CheckOut = '" + res.getEnd() + "', ";
+		statement += "Children = '" + res.getChildren() + "', ";
+		statement += "Adults = '" + res.getAdults() + "' ";
+		statement += "WHERE Code = " + res.getCode();
+		
+		return statement + ";";
+	}
+	
+	/* Requirement 4
+	 * Reservation Cancellation
+	 */
+
+	public static String req4(){
+		System.out.println("Please enter your reservation code to cancel:");
+		Scanner reader = new Scanner (System.in);
+		// Get Res Info
+		Reservation res = fetch_res(reader.nextInt());
+		
+		// Display Res Info
+		print_res(res);
+		System.out.print("Confirm Cancellation (Y/N): ");
+		
+		// Confirm Cancellation
+		if(reader.next().charAt(0) == 'Y' || reader.next().charAt(0) == 'y'){
+			String statement = "DELETE FROM Reservations ";
+			statement += "WHERE Code = " + res.getCode();
+			return statement + ";";
+		}
+		else if(reader.next().charAt(0) == 'N' || reader.next().charAt(0) == 'n'){
+			return "";
+		}
+		else{
+			System.out.println("Invalid Input");
+			return "";
+		}
+	}
+	
+	// Fetches a reservation based on the Reservation Code
+	// Returns ArrayList of Reservation
+	public static Reservation fetch_res(int code){
+		Reservation res = new Reservation(null, null, null, null, null, null, null, null); 
+		
+		String statement = "SELECT * FROM reservations"; 
+		statement += " WHERE Code = " + code + ";";
+		
+		//TODO parse the returned data
+		return res;
+	}
+	
+	public static void print_res(Reservation res){
+		// Display Res Info
+		System.out.printf("Reservation: %i\n", res.getCode());
+		System.out.printf("\t1: First Name: %s\n", res.getFirst());
+		System.out.printf("\t2: Last Name: %s\n", res.getLast());
+		System.out.printf("\t3: Range of Dates: %s - %s\n", res.getBegin(), res.getEnd());
+		System.out.printf("\t4: Number of Children: %i\n", res.getChildren());
+		System.out.printf("\t5: Number of Adults: %i\n", res.getAdults());
+	}
+	
+	/* Requirement 5
+	 * Reservation Info
+	 */
+	
+	public static ArrayList<String> req5(){
 		ArrayList<String> inputs = new ArrayList<String>(); 
 
 		for(int i = 0; i < 6; i++){
@@ -65,7 +240,7 @@ class Inn_Reservations{
 		boolean loop = true;
 
 		while(loop){
-			int input = Ask_For_Option(inputs);
+			int input = Ask_For_Option5(inputs);
 
 			switch(input){
 				case 1: //First Name, inputs(0)
@@ -104,8 +279,8 @@ class Inn_Reservations{
 		}
 		return null;
 	}
-
-	public static int Ask_For_Option(ArrayList<String> inputs){
+	
+	public static int Ask_For_Option5(ArrayList<String> inputs){
 		System.out.println("Which Criteria would you like to search by:");
 		System.out.print("\t1: First Name:        ");
 		System.out.println(inputs.get(0));
@@ -136,22 +311,6 @@ class Inn_Reservations{
 		input = reader.nextInt(); 
 
 		return input; 
-	}
-
-	public static String contruct_req1_sql_statement(){
-		String statement = "SELECT * FROM reservations"; 
-	}
-
-	public static String contruct_req2_sql_statement(){
-			
-	}
-
-	public static String contruct_req3_sql_statement(){
-			
-	}
-
-	public static String contruct_req4_sql_statement(){
-			
 	}
 
 	public static String contruct_req5_sql_statement(ArrayList<String> inputs){
@@ -235,7 +394,7 @@ class Inn_Reservations{
 				//Reservation Code
 				else if(i == 5 && inputs.get(i) != "Empty"){
 					//there is a first name 
-					statement = statement + "CODE = '" + inputs.get(i) + "'";
+					statement = statement + "Code = '" + inputs.get(i) + "'";
 					numNonempties--;
 
 					if(numNonempties > 0){
@@ -247,6 +406,16 @@ class Inn_Reservations{
 			}
 		}
 		
+		return statement + ";";
+	}
+	
+	/* Requirement 6
+	 * Revenue Info
+	 */
+	
+	public static String contruct_req6_sql_statement(){
+		String statement = "SELECT * FROM reservations"; 
+			
 		return statement + ";";
 	}
 }
