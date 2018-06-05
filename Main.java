@@ -27,8 +27,8 @@ class Inn_Reservations{
 				    break;
 				case 2:
 					System.out.println("Option 2: Make a Reservation");
-					inputs = req2();
-					System.out.println(contruct_req2_sql_statement(inputs));
+					res = req2();
+					System.out.println(contruct_req2_sql_statement(res));
 					break;
 				case 3:
 					System.out.println("Option 3: Change a Reservation");
@@ -46,7 +46,7 @@ class Inn_Reservations{
 				   	break;
 				case 6:
 					System.out.println("Option 6: Inn Revenue");
-					System.out.println(contruct_req6_sql_statement(inputs));
+					System.out.println(contruct_req6_sql_statement());
 					break;
 				case 7:
 					System.out.println("Thank you for using the Inn Reservation System");
@@ -69,8 +69,11 @@ class Inn_Reservations{
 	/* Requirement 2
 	 * Reservation Creation
 	 */
+	public static Reservation req2(){
+		return null;
+	}
 
-	public static String contruct_req2_sql_statement(){
+	public static String contruct_req2_sql_statement(Reservation res){
 		String statement = "SELECT * FROM reservations"; 
 		
 		return statement + ";";
@@ -92,7 +95,7 @@ class Inn_Reservations{
 		res = fetch_res(code);
 
 		while(loop){
-			int input = Ask_For_Option3(inputs);
+			int input = Ask_For_Option3(res);
 
 			switch(input){
 				case 1: //First Name, inputs(0)
@@ -138,7 +141,7 @@ class Inn_Reservations{
 		System.out.println(res.getLast());
 
 		System.out.print("\t3: Range of Dates:    ");
-		if(inputs.get(3) == "Empty"){
+		if(res.getEnd() == null){
 			System.out.println(res.getBegin());
 		}
 		else{
@@ -205,7 +208,7 @@ class Inn_Reservations{
 	// Fetches a reservation based on the Reservation Code
 	// Returns ArrayList of Reservation
 	public static Reservation fetch_res(int code){
-		Reservation res = new Reservation(null, null, null, null, null, null, null, null); 
+		Reservation res = new Reservation(); 
 		
 		String statement = "SELECT * FROM reservations"; 
 		statement += " WHERE Code = " + code + ";";
@@ -227,7 +230,7 @@ class Inn_Reservations{
 	/* Requirement 5
 	 * Reservation Info
 	 */
-	
+	// TODO convert to using Reservation Object
 	public static ArrayList<String> req5(){
 		ArrayList<String> inputs = new ArrayList<String>(); 
 
@@ -419,9 +422,3 @@ class Inn_Reservations{
 		return statement + ";";
 	}
 }
-
-
-
-
-
-
