@@ -26,15 +26,15 @@ class Reservation{
 	}
 		
 	public Reservation(){
-		this.first = null;
-		this.last = null;
-		this.begin = null;
-		this.end = null;
-		this.children = -1;
-		this.adults = -1;
-		this.bed = null;
-		this.room = null;
-		this.code = -1;
+		this.first = "";
+		this.last = "";
+		this.begin = "";
+		this.end = "";
+		this.children = 0;
+		this.adults = 0;
+		this.bed = "";
+		this.room = "";
+		this.code = 0;
 	}
 		
 	//Returns true on weekend for rate calculation

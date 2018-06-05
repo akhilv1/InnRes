@@ -131,7 +131,7 @@ class Inn_Reservations{
 	}
 	
 	public static int Ask_For_Option2(Reservation res){
-		int input; 
+		int input = 0;
 		Scanner reader = new Scanner (System.in);
 		
 		System.out.println("Choose a feild to edit:");
@@ -145,7 +145,11 @@ class Inn_Reservations{
 		System.out.println("\t8: Confirm Reservation");
 
 		System.out.print("\nChoose which option to enter: ");
-		input = reader.nextInt(); 
+		try {
+			input = reader.nextInt();
+		} catch (Exception InputMismatchException) {
+			System.out.println("Invalid Type");
+		} 
 
 		return input; 
 	}
@@ -226,7 +230,7 @@ class Inn_Reservations{
 	}
 	
 	public static int Ask_For_Option3(Reservation res){
-		int input; 
+		int input = 0;
 		Scanner reader = new Scanner (System.in);
 		
 		System.out.println("Choose a feild to edit:");
@@ -240,7 +244,11 @@ class Inn_Reservations{
 		System.out.println("\t6: Confirm Reservation");
 
 		System.out.print("\nChoose which option to enter: ");
-		input = reader.nextInt(); 
+		try {
+			input = reader.nextInt();
+		} catch (Exception InputMismatchException) {
+			System.out.println("Invalid Type");
+		}  
 
 		return input; 
 	}
@@ -392,9 +400,13 @@ class Inn_Reservations{
 
 		System.out.print("\nChoose which option to enter: ");
 
-		int input; 
+		int input = 0;
 		Scanner reader = new Scanner (System.in);
-		input = reader.nextInt(); 
+		try {
+			input = reader.nextInt();
+		} catch (Exception InputMismatchException) {
+			System.out.println("Invalid Type");
+		}  
 
 		return input; 
 	}
