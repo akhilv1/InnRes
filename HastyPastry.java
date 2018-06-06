@@ -37,7 +37,7 @@ public class HastyPastry {
     public static void main(String[] args) {
 		try {
 		    HastyPastry hp = new HastyPastry();
-		    hp.demo1();
+		    hp.demo2();
 		} catch (SQLException e) {
 		    System.err.println("SQLException: " + e.getMessage());
 		}
