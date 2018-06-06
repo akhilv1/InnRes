@@ -139,9 +139,16 @@ class Inn_Reservations{
 		System.out.printf("\t2: Last Name: %s\n", res.getLast());
 		System.out.printf("\t3: Desired Room: %s\n", res.room);
 		System.out.printf("\t4: Desired Bed: %s\n", res.bed);
-		System.out.printf("\t5: Range of Dates: %s - %s\n", res.getBegin(), res.getEnd());
-		System.out.printf("\t6: Number of Children: %i\n", res.getChildren());
-		System.out.printf("\t7: Number of Adults: %i\n", res.getAdults());
+
+		if(res.getBegin() == ""){
+			System.out.printf("\t5: Range of Dates: \n"); 
+		}
+		else{
+			System.out.printf("\t5: Range of Dates: %s - %s\n", res.getBegin(), res.getEnd());
+		}
+		
+		System.out.printf("\t6: Number of Children: %d\n", res.getChildren());
+		System.out.printf("\t7: Number of Adults: %d\n", res.getAdults());
 		System.out.println("\t8: Confirm Reservation");
 
 		System.out.print("\nChoose which option to enter: ");
@@ -234,12 +241,19 @@ class Inn_Reservations{
 		Scanner reader = new Scanner (System.in);
 		
 		System.out.println("Choose a feild to edit:");
-		System.out.printf("Reservation: %i\n", res.getCode());
+		System.out.printf("Reservation: %d\n", res.getCode());
 		System.out.printf("\t1: First Name: %s\n", res.getFirst());
 		System.out.printf("\t2: Last Name: %s\n", res.getLast());
-		System.out.printf("\t3: Range of Dates: %s - %s\n", res.getBegin(), res.getEnd());
-		System.out.printf("\t4: Number of Children: %i\n", res.getChildren());
-		System.out.printf("\t5: Number of Adults: %i\n", res.getAdults());
+
+		if(res.getBegin() == ""){
+			System.out.printf("\t5: Range of Dates: \n"); 
+		}
+		else{
+			System.out.printf("\t5: Range of Dates: %s - %s\n", res.getBegin(), res.getEnd());
+		}
+
+		System.out.printf("\t4: Number of Children: %d\n", res.getChildren());
+		System.out.printf("\t5: Number of Adults: %d\n", res.getAdults());
 
 		System.out.println("\t6: Confirm Reservation");
 
@@ -275,8 +289,11 @@ class Inn_Reservations{
 		System.out.println("Please enter your reservation code to cancel:");
 		Scanner reader = new Scanner (System.in);
 		// Get Res Info
-		Reservation res = fetch_res(reader.nextInt());
-		
+
+		int code = reader.nextInt();
+		Reservation res = fetch_res(code);
+		res.code = code; 
+
 		// Display Res Info
 		print_res(res);
 		System.out.print("Confirm Cancellation (Y/N): ");
@@ -310,12 +327,19 @@ class Inn_Reservations{
 	
 	public static void print_res(Reservation res){
 		// Display Res Info
-		System.out.printf("Reservation: %i\n", res.getCode());
+		System.out.printf("Reservation: %d\n", res.getCode());
 		System.out.printf("\tFirst Name: %s\n", res.getFirst());
 		System.out.printf("\tLast Name: %s\n", res.getLast());
-		System.out.printf("\tRange of Dates: %s - %s\n", res.getBegin(), res.getEnd());
-		System.out.printf("\tNumber of Children: %i\n", res.getChildren());
-		System.out.printf("\tNumber of Adults: %i\n", res.getAdults());
+		
+		if(res.getBegin() == ""){
+			System.out.printf("\t5: Range of Dates: \n"); 
+		}
+		else{
+			System.out.printf("\t5: Range of Dates: %s - %s\n", res.getBegin(), res.getEnd());
+		}
+
+		System.out.printf("\tNumber of Children: %d\n", res.getChildren());
+		System.out.printf("\tNumber of Adults: %d\n", res.getAdults());
 	}
 	
 	/* Requirement 5
