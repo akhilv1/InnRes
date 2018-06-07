@@ -26,18 +26,17 @@ class Inn_Reservations{
 					System.out.println("Option 1: Show Rooms and Rates");
 					req1();
 				    break;
-				case 2:
+				case 2: // TODO handle "Any" case by generating bed and room
 					System.out.println("Option 2: Make a Reservation");
 					res = req2();
-					sql = contruct_req2_sql_statement(res);
-//					execSql(sql);
+					req2_confirm(res);
 					System.out.println(sql);
 					break;
 				case 3:
 					System.out.println("Option 3: Change a Reservation");
 					res = req3();
 					sql = contruct_req3_sql_statement(res);
-//					execSql(sql);
+					execSql(sql);
 					System.out.println(sql);
 				    break;
 				case 4:
@@ -62,13 +61,13 @@ class Inn_Reservations{
 			}
 		}
 	}
-	
-//	public static boolean checkDate(String Date){
-//		while()
-//		return false;
-//	}
-	
-	public static boolean execSql(String sql) throws SQLException{
+
+	// Checks the date to confirm YYYY-MM-DD Format	
+	public static boolean checkDate(String Date){
+		return true;
+	}
+		
+	public static boolean execSql(String sql){
 		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
 								   System.getenv("HP_JDBC_USER"),
 								   System.getenv("HP_JDBC_PW"))) {
@@ -76,6 +75,14 @@ class Inn_Reservations{
 		    try (Statement stmt = conn.createStatement()) {
 				return stmt.execute(sql);
 		    }
+			catch(SQLException e){
+				System.err.println("SQLException: " + e.getMessage());
+				return false;
+			}
+		}
+		catch(SQLException e){
+			System.err.println("SQLException: " + e.getMessage());
+			return false;
 		}
 	}
 	
@@ -124,11 +131,10 @@ class Inn_Reservations{
 
 		Scanner reader = new Scanner (System.in);
 		String userInput; 
-		boolean loop = true;
 
 		System.out.println("Make a Reservation: ");
 
-		while(loop){
+		while(true){
 			int input = Ask_For_Option2(res);
 
 			switch(input){
@@ -149,12 +155,17 @@ class Inn_Reservations{
 					res.bed = reader.nextLine();
 					break;
 				case 5: //Date Range, Start Date = inputs(2), End Date = inputs(3)
-					// TODO type checking
 					System.out.print("Enter a Start Date (YYYY-MM-DD): ");
 					res.checkIn = reader.nextLine();
 
 					System.out.print("Enter a End Date (YYYY-MM-DD): ");
 					res.checkOut = reader.nextLine();
+					
+					if(!checkDate(res.checkIn) || !checkDate(res.checkOut)){
+						res.checkIn = "";
+						res.checkOut = "";
+						System.out.println("Please enter the date in YYYY-MM-DD Format");
+					}
 					break;
 				case 6: //Numebr of Children,inputs(4)
 					System.out.print("Enter the number of Children: ");
@@ -173,12 +184,12 @@ class Inn_Reservations{
 					}
 					break;
 				case 8:
-					loop = false;
-					// TODO handle any case and confirmation printout
 					return res;
+				case 9:
+					return null;
+					
 			}
 		}
-		return null;
 	}
 	
 	public static int Ask_For_Option2(Reservation res){
@@ -201,7 +212,8 @@ class Inn_Reservations{
 		System.out.printf("\t6: Number of Children: %d\n", res.getChildren());
 		System.out.printf("\t7: Number of Adults: %d\n", res.getAdults());
 		System.out.println("\t8: Confirm Reservation");
-
+		System.out.println("\t9: Cancel");
+		
 		System.out.print("\nChoose which option to enter: ");
 		try {
 			input = reader.nextInt();
@@ -210,6 +222,27 @@ class Inn_Reservations{
 		} 
 
 		return input; 
+	}
+	
+	public static boolean req2_confirm(Reservation res){
+		Scanner reader = new Scanner (System.in);
+		print_res(res);
+		System.out.printf("Total Cost: %.2f %nConfirm Reservation (Y/N):", res.getCost());
+		
+		// Confirm Reservation
+		while(true){
+			String input = reader.next();
+			if(input.charAt(0) == 'Y' || input.charAt(0) == 'y'){
+				execSql(contruct_req2_sql_statement(res));
+				return true;
+			}
+			else if(input.charAt(0) == 'N' || input.charAt(0) == 'n'){
+				return false;
+			}
+			else{
+				System.out.println("Invalid Input%nConfirm Reservation (Y/N):");
+			}
+		}
 	}
 
 	// TODO handle any case and display options if no matches found
@@ -238,14 +271,13 @@ class Inn_Reservations{
 		Reservation res;
 
 		Scanner reader = new Scanner (System.in);
-		String userInput; 
-		boolean loop = true;
+		String userInput;
 
 		System.out.println("Please enter your reservation code to edit:");
 		int code = reader.nextInt();
 		res = fetch_res(code);
 
-		while(loop){
+		while(true){
 			int input = Ask_For_Option3(res);
 
 			switch(input){
@@ -264,6 +296,12 @@ class Inn_Reservations{
 
 					System.out.print("Enter a End Date (YYYY-MM-DD): ");
 					res.checkOut = reader.nextLine();
+					
+					if(!checkDate(res.checkIn) || !checkDate(res.checkOut)){
+						res.checkIn = "";
+						res.checkOut = "";
+						System.out.println("Please enter the date in YYYY-MM-DD Format");
+					}
 					break;
 				case 4: //Numebr of Children,inputs(4)
 					System.out.print("Enter the number of Children: ");
@@ -282,11 +320,11 @@ class Inn_Reservations{
 					}
 					break;
 				case 6:
-					loop = false;
 					return res;
+				case 7:
+					return null;
 			}
 		}
-		return null;
 	}
 	
 	public static int Ask_For_Option3(Reservation res){
@@ -309,7 +347,8 @@ class Inn_Reservations{
 		System.out.printf("\t5: Number of Adults: %d\n", res.getAdults());
 
 		System.out.println("\t6: Confirm Reservation");
-
+		System.out.println("\t7: Cancel Changes");
+		
 		System.out.print("\nChoose which option to enter: ");
 		try {
 			input = reader.nextInt();
@@ -338,7 +377,7 @@ class Inn_Reservations{
 	 * Reservation Cancellation
 	 */
 
-	public static String req4(){
+	public static boolean req4(){
 		System.out.println("Please enter your reservation code to cancel:");
 		Scanner reader = new Scanner (System.in);
 		// Get Res Info
@@ -352,17 +391,20 @@ class Inn_Reservations{
 		System.out.print("Confirm Cancellation (Y/N): ");
 		
 		// Confirm Cancellation
-		if(reader.next().charAt(0) == 'Y' || reader.next().charAt(0) == 'y'){
-			String statement = "DELETE FROM Reservations ";
-			statement += "WHERE Code = " + res.getCode();
-			return statement + ";";
-		}
-		else if(reader.next().charAt(0) == 'N' || reader.next().charAt(0) == 'n'){
-			return "";
-		}
-		else{
-			System.out.println("Invalid Input");
-			return "";
+		while(true){
+			String input = reader.next();
+			if(input.charAt(0) == 'Y' || input.charAt(0) == 'y'){
+				String statement = "DELETE FROM Reservations ";
+				statement += "WHERE Code = " + res.getCode()+ ";";
+				execSql(statement);
+				return true;
+			}
+			else if(input.charAt(0) == 'N' || input.charAt(0) == 'n'){
+				return false;
+			}
+			else{
+				System.out.println("Invalid Input%nConfirm Cancellation (Y/N):");
+			}
 		}
 	}
 	
@@ -470,9 +512,8 @@ class Inn_Reservations{
 
 		Scanner reader = new Scanner (System.in);
 		String userInput; 
-		boolean loop = true;
 
-		while(loop){
+		while(true){
 			int input = Ask_For_Option5(inputs);
 
 			switch(input){
@@ -494,6 +535,12 @@ class Inn_Reservations{
 					System.out.print("Enter a End Date (YYYY-MM-DD): ");
 					userInput = reader.nextLine();
 					inputs.set(3, userInput);
+					
+					if(!checkDate(inputs.get(2)) || !checkDate(inputs.get(3))){
+						inputs.set(2, "Empty");
+						inputs.set(3, "Empty");
+						System.out.println("Please enter the date in YYYY-MM-DD Format");
+					}
 					break;
 				case 4: //Room Code,inputs(4)
 					System.out.print("Enter a Room Code: ");
@@ -506,11 +553,9 @@ class Inn_Reservations{
 					inputs.set(5, userInput);
 					break;
 				case 6:
-					loop = false;
 					return inputs;
 			}
 		}
-		return null;
 	}
 	
 	public static int Ask_For_Option5(ArrayList<String> inputs){

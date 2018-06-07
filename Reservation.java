@@ -101,12 +101,14 @@ class Reservation{
 		
 	public float getCost(){
 		this.cost = 0;
+		
 		for(int i = 0; i < this.getLength(this.checkIn, this.checkOut); i ++){
 			if(checkWeekend(this.checkIn, i))
 				this.cost += 1.1 * this.getRate();
 			else
 				this.cost += this.getRate();
 		}
+		
 		this.cost = (float)(this.getRate() * 1.18);
 		return this.cost;
 	}
