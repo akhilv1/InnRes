@@ -85,7 +85,7 @@ class Inn_Reservations{
 
 	public static void req1(){
 		String sql = "select res.room room, length, beds, bedtype, maxocc, baseprice, pop, latest, length from (select res.room, DATEDIFF(checkout, checkin) length, max.latest from reservations res join (select room, max(checkout) latest from reservations group by Room) max on res.Room = max.room where res.checkout = max.latest) latest join (select room, beds, bedType, maxOcc, basePrice, (SUM(DATEDIFF(checkout, checkin)) / 180) as pop from rooms join reservations res on (rooms.RoomCode = res.room) where DATEDIFF('2010-10-23', checkin) < 180 group by room order by pop desc) res on res.room = latest.room;";
-			
+			// Freezes for whatever reason
 			try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
 								   System.getenv("HP_JDBC_USER"),
 								   System.getenv("HP_JDBC_PW"))) {
@@ -151,10 +151,10 @@ class Inn_Reservations{
 				case 5: //Date Range, Start Date = inputs(2), End Date = inputs(3)
 					// TODO type checking
 					System.out.print("Enter a Start Date (YYYY-MM-DD): ");
-					res.begin = reader.nextLine();
+					res.checkIn = reader.nextLine();
 
 					System.out.print("Enter a End Date (YYYY-MM-DD): ");
-					res.end = reader.nextLine();
+					res.checkOut = reader.nextLine();
 					break;
 				case 6: //Numebr of Children,inputs(4)
 					System.out.print("Enter the number of Children: ");
@@ -191,11 +191,11 @@ class Inn_Reservations{
 		System.out.printf("\t3: Desired Room: %s\n", res.room);
 		System.out.printf("\t4: Desired Bed: %s\n", res.bed);
 
-		if(res.getBegin() == ""){
+		if(res.getCheckIn() == ""){
 			System.out.printf("\t5: Range of Dates: \n"); 
 		}
 		else{
-			System.out.printf("\t5: Range of Dates: %s - %s\n", res.getBegin(), res.getEnd());
+			System.out.printf("\t5: Range of Dates: %s - %s\n", res.getCheckIn(), res.getCheckOut());
 		}
 		
 		System.out.printf("\t6: Number of Children: %d\n", res.getChildren());
@@ -219,8 +219,9 @@ class Inn_Reservations{
 		
 		statement += res.getCode() + ", ";
 		statement += "'" + res.getRoom() + "', ";
-		statement += "'" + res.getBegin() + "', ";
-		statement += "'" + res.getEnd() + "', ";
+		statement += "'" + res.getCheckIn() + "', ";
+		statement += "'" + res.getCheckOut() + "', ";
+		statement += res.getRate() + ", "
 		statement += "'" + res.getLast() + "', ";
 		statement += "'" + res.getFirst() + "', ";
 		statement += res.getAdults() + ", ";
@@ -259,10 +260,10 @@ class Inn_Reservations{
 				case 3: //Date Range, Start Date = inputs(2), End Date = inputs(3)
 					// TODO type checking
 					System.out.print("Enter a Start Date (YYYY-MM-DD): ");
-					res.begin = reader.nextLine();
+					res.checkIn = reader.nextLine();
 
 					System.out.print("Enter a End Date (YYYY-MM-DD): ");
-					res.end = reader.nextLine();
+					res.checkOut = reader.nextLine();
 					break;
 				case 4: //Numebr of Children,inputs(4)
 					System.out.print("Enter the number of Children: ");
@@ -297,11 +298,11 @@ class Inn_Reservations{
 		System.out.printf("\t1: First Name: %s\n", res.getFirst());
 		System.out.printf("\t2: Last Name: %s\n", res.getLast());
 
-		if(res.getBegin() == ""){
+		if(res.getCheckIn() == ""){
 			System.out.printf("\t5: Range of Dates: \n"); 
 		}
 		else{
-			System.out.printf("\t5: Range of Dates: %s - %s\n", res.getBegin(), res.getEnd());
+			System.out.printf("\t5: Range of Dates: %s - %s\n", res.getCheckIn(), res.getCheckOut());
 		}
 
 		System.out.printf("\t4: Number of Children: %d\n", res.getChildren());
@@ -324,8 +325,8 @@ class Inn_Reservations{
 		
 		statement += "FirstName = '" + res.getFirst() + "', ";
 		statement += "LastName = '" + res.getLast() + "', ";
-		statement += "CheckIn = '" + res.getBegin() + "', ";
-		statement += "CheckOut = '" + res.getEnd() + "', ";
+		statement += "CheckIn = '" + res.getCheckIn() + "', ";
+		statement += "CheckOut = '" + res.getCheckOut() + "', ";
 		statement += "Children = " + res.getChildren() + ", ";
 		statement += "Adults = " + res.getAdults();
 		statement += " WHERE Code = " + res.getCode();
@@ -382,15 +383,15 @@ class Inn_Reservations{
 				while(rs.next()){ // Only returns the last reservation in  a list
 				    res.code = rs.getInt("CODE");
 					res.room = rs.getString("Room");
-					res.begin = rs.getString("CheckIn");
-					res.end = rs.getString("CheckOut");
+					res.checkIn = rs.getString("CheckIn");
+					res.checkOut = rs.getString("CheckOut");
 					res.first = rs.getString("FirstName");
 					res.last = rs.getString("LastName");
 					res.adults = rs.getInt("Adults");
 					res.children = rs.getInt("Kids");
 					res.rate = rs.getFloat("Rate");
 					
-//				    System.out.format("%d %s %s %s %s %s %n", res.code, res.room, res.first, res.last, res.begin, res.end);
+//				    System.out.format("%d %s %s %s %s %s %n", res.code, res.room, res.first, res.last, res.checkIn, res.checkOut);
 				}
 			}
 			catch(SQLException e){
@@ -418,15 +419,15 @@ class Inn_Reservations{
 					Reservation res = new Reservation(); 
 				    res.code = rs.getInt("CODE");
 					res.room = rs.getString("Room");
-					res.begin = rs.getString("CheckIn");
-					res.end = rs.getString("CheckOut");
+					res.checkIn = rs.getString("CheckIn");
+					res.checkOut = rs.getString("CheckOut");
 					res.first = rs.getString("FirstName");
 					res.last = rs.getString("LastName");
 					res.adults = rs.getInt("Adults");
 					res.children = rs.getInt("Kids");
 					
 					print_res(res);
-//				    System.out.format("%d %s %s %s %s %s %n", res.code, res.room, res.first, res.last, res.begin, res.end);
+//				    System.out.format("%d %s %s %s %s %s %n", res.code, res.room, res.first, res.last, res.checkIn, res.checkOut);
 				}
 			}
 			catch(SQLException e){
@@ -440,20 +441,20 @@ class Inn_Reservations{
 	
 	public static void print_res(Reservation res){
 		// Display Res Info
-		System.out.printf("\tReservation: %d\n", res.getCode());
-		System.out.printf("\tFirst Name: %s\n", res.getFirst());
-		System.out.printf("\tLast Name: %s\n", res.getLast());
-		System.out.printf("\tLast Name: %.2f\n", res.getRate());
+		System.out.printf("\tReservation:\t %d\n", res.getCode());
+		System.out.printf("\tFirst Name:\t %s\n", res.getFirst());
+		System.out.printf("\tLast Name:\t %s\n", res.getLast());
+		System.out.printf("\tRate:\t\t %.2f\n", res.getRate());
 		
-		if(res.getBegin() == ""){
+		if(res.getCheckIn() == ""){
 			System.out.printf("\tRange of Dates: \n"); 
 		}
 		else{
-			System.out.printf("\tRange of Dates: %s - %s\n", res.getBegin(), res.getEnd());
+			System.out.printf("\tRange of Dates:\t %s - %s\n", res.getCheckIn(), res.getCheckOut());
 		}
 
-		System.out.printf("\tNumber of Children: %d\n", res.getChildren());
-		System.out.printf("\tNumber of Adults: %d\n\n", res.getAdults());
+		System.out.printf("\tNumber of Children:\t %d\n", res.getChildren());
+		System.out.printf("\tNumber of Adults:\t %d\n\n", res.getAdults());
 	}
 	
 	/* Requirement 5
