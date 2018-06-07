@@ -1,4 +1,3 @@
-import java.util.Random;
 import java.sql.*;
 
 class Reservation{ 
@@ -12,6 +11,7 @@ class Reservation{
 	public String roomCode; // Generated Room
 	public String bed; // User's Input
 	public int code;
+	public float rate;
 
 	public Reservation(String first, String last, String room, 
 		String bed, String begin, String end, int children, int adults){
@@ -102,6 +102,7 @@ class Reservation{
 				System.err.println("SQLException: " + e.getMessage());
 				return -1;
 			}
+			
 			this.code = ++ max;
 			return this.code;
 		}
@@ -111,23 +112,7 @@ class Reservation{
 		return this.code;
 	}
 	
-	public ResultSet sql_Query(String sql){
-		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
-							   System.getenv("HP_JDBC_USER"),
-							   System.getenv("HP_JDBC_PW"))) {
-
-			try (Statement stmt = conn.createStatement();
-				 ResultSet rs = stmt.executeQuery(sql)) {
-				return rs;
-			}
-			catch(SQLException e){
-				System.err.println("SQLException: " + e.getMessage());
-				return null;
-			}
-		}
-		catch(SQLException e){
-			System.err.println("SQLException: " + e.getMessage());
-			return null;
-		}
+	public float getRate(){
+		return this.rate;
 	}
 }

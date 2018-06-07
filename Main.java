@@ -19,21 +19,26 @@ class Inn_Reservations{
 
 			sel = reader.nextInt();
 			ArrayList<String> inputs;
+			String sql = "";
 			Reservation res;
 			switch (sel){
 				case 1:
 					System.out.println("Option 1: Show Rooms and Rates");
-					System.out.println(contruct_req1_sql_statement());
+					req1();
 				    break;
 				case 2:
 					System.out.println("Option 2: Make a Reservation");
 					res = req2();
-					System.out.println(contruct_req2_sql_statement(res));
+					sql = contruct_req2_sql_statement(res);
+//					execSql(sql);
+					System.out.println(sql);
 					break;
 				case 3:
 					System.out.println("Option 3: Change a Reservation");
 					res = req3();
-					System.out.println(contruct_req3_sql_statement(res));
+					sql = contruct_req3_sql_statement(res);
+//					execSql(sql);
+					System.out.println(sql);
 				    break;
 				case 4:
 					System.out.println("Option 4: Cancel a Reservation");
@@ -42,7 +47,9 @@ class Inn_Reservations{
 				case 5:
 					System.out.println("Option 5: About a Reservation\n");
 					inputs = req5();
-					System.out.println(contruct_req5_sql_statement(inputs));
+					sql = contruct_req5_sql_statement(inputs);
+					System.out.println(sql);
+					fetch_res(sql);
 				   	break;
 				case 6:
 					System.out.println("Option 6: Inn Revenue");
@@ -56,14 +63,57 @@ class Inn_Reservations{
 		}
 	}
 	
+//	public static boolean checkDate(String Date){
+//		while()
+//		return false;
+//	}
+	
+	public static boolean execSql(String sql) throws SQLException{
+		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
+								   System.getenv("HP_JDBC_USER"),
+								   System.getenv("HP_JDBC_PW"))) {
+
+		    try (Statement stmt = conn.createStatement()) {
+				return stmt.execute(sql);
+		    }
+		}
+	}
+	
 	/* Requirement 1
 	 * Rooms and Rates
 	 */
 
-	public static String contruct_req1_sql_statement(){
-		String statement = "SELECT * FROM reservations"; 
-		
-		return statement + ";";
+	public static void req1(){
+		String sql = "select res.room room, length, beds, bedtype, maxocc, baseprice, pop, latest, length from (select res.room, DATEDIFF(checkout, checkin) length, max.latest from reservations res join (select room, max(checkout) latest from reservations group by Room) max on res.Room = max.room where res.checkout = max.latest) latest join (select room, beds, bedType, maxOcc, basePrice, (SUM(DATEDIFF(checkout, checkin)) / 180) as pop from rooms join reservations res on (rooms.RoomCode = res.room) where DATEDIFF('2010-10-23', checkin) < 180 group by room order by pop desc) res on res.room = latest.room;";
+			
+			try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
+								   System.getenv("HP_JDBC_USER"),
+								   System.getenv("HP_JDBC_PW"))) {
+
+				try (Statement stmt = conn.createStatement();
+					 ResultSet rs = stmt.executeQuery(sql)) {
+					while(rs.next()){ // Only returns the last reservation in  a list
+						Rooms room = new Rooms();
+						System.out.println("Room\tRate\tPopularity\tLatest\tLength\t");
+					    room.room = rs.getString("room");
+						room.rate = rs.getInt("baseprice");
+						room.popularity = rs.getFloat("pop");
+						room.latest = rs.getString("latest");
+						room.length = rs.getInt("length");	
+						room.maxOcc = rs.getInt("maxocc");
+						room.bed = rs.getString("bedtype");
+						room.numBeds = rs.getInt("beds");
+						
+						System.out.printf("%s\t%d\t%.2f\t%s\t%d%n", room.room, room.rate, room.popularity, room.latest, room.length);
+					}
+				}
+				catch(SQLException e){
+					System.err.println("SQLException: " + e.getMessage());
+				}
+			}
+			catch(SQLException e){
+				System.err.println("SQLException: " + e.getMessage());
+			}
 	}
 	
 	/* Requirement 2
@@ -124,6 +174,7 @@ class Inn_Reservations{
 					break;
 				case 8:
 					loop = false;
+					// TODO handle any case and confirmation printout
 					return res;
 			}
 		}
@@ -161,7 +212,8 @@ class Inn_Reservations{
 		return input; 
 	}
 
-	// TODO generate Reservation Code
+	// TODO handle any case and display options if no matches found
+	// TODO check date availability
 	public static String contruct_req2_sql_statement(Reservation res){
 		String statement = "INSERT INTO Reservations (Code, Room, CheckIn, CheckOut, Rate, LastName, FirstName, Adults, Kids) VALUES (";
 		
@@ -241,7 +293,7 @@ class Inn_Reservations{
 		Scanner reader = new Scanner (System.in);
 		
 		System.out.println("Choose a feild to edit:");
-		System.out.printf("Reservation: %d\n", res.getCode());
+		System.out.printf("\tReservation: %d\n", res.getCode());
 		System.out.printf("\t1: First Name: %s\n", res.getFirst());
 		System.out.printf("\t2: Last Name: %s\n", res.getLast());
 
@@ -318,28 +370,90 @@ class Inn_Reservations{
 	public static Reservation fetch_res(int code){
 		Reservation res = new Reservation(); 
 		
-		String statement = "SELECT * FROM reservations"; 
-		statement += " WHERE Code = " + code + ";";
+		String sql = "SELECT * FROM reservations"; 
+		sql += " WHERE Code = " + code + ";";
 		
-		//TODO parse the returned data
+		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
+							   System.getenv("HP_JDBC_USER"),
+							   System.getenv("HP_JDBC_PW"))) {
+
+			try (Statement stmt = conn.createStatement();
+				 ResultSet rs = stmt.executeQuery(sql)) {
+				while(rs.next()){ // Only returns the last reservation in  a list
+				    res.code = rs.getInt("CODE");
+					res.room = rs.getString("Room");
+					res.begin = rs.getString("CheckIn");
+					res.end = rs.getString("CheckOut");
+					res.first = rs.getString("FirstName");
+					res.last = rs.getString("LastName");
+					res.adults = rs.getInt("Adults");
+					res.children = rs.getInt("Kids");
+					res.rate = rs.getFloat("Rate");
+					
+//				    System.out.format("%d %s %s %s %s %s %n", res.code, res.room, res.first, res.last, res.begin, res.end);
+				}
+			}
+			catch(SQLException e){
+				System.err.println("SQLException: " + e.getMessage());
+				return null;
+			}
+		}
+		catch(SQLException e){
+			System.err.println("SQLException: " + e.getMessage());
+			return null;
+		}
+		
 		return res;
+	}
+	
+	// Overloaded function that prints the resulting entries of an SQL query
+	public static void fetch_res(String sql){
+		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
+							   System.getenv("HP_JDBC_USER"),
+							   System.getenv("HP_JDBC_PW"))) {
+
+			try (Statement stmt = conn.createStatement();
+				 ResultSet rs = stmt.executeQuery(sql)) {
+				while(rs.next()){ // Only returns the last reservation in  a list
+					Reservation res = new Reservation(); 
+				    res.code = rs.getInt("CODE");
+					res.room = rs.getString("Room");
+					res.begin = rs.getString("CheckIn");
+					res.end = rs.getString("CheckOut");
+					res.first = rs.getString("FirstName");
+					res.last = rs.getString("LastName");
+					res.adults = rs.getInt("Adults");
+					res.children = rs.getInt("Kids");
+					
+					print_res(res);
+//				    System.out.format("%d %s %s %s %s %s %n", res.code, res.room, res.first, res.last, res.begin, res.end);
+				}
+			}
+			catch(SQLException e){
+				System.err.println("SQLException: " + e.getMessage());
+			}
+		}
+		catch(SQLException e){
+			System.err.println("SQLException: " + e.getMessage());
+		}
 	}
 	
 	public static void print_res(Reservation res){
 		// Display Res Info
-		System.out.printf("Reservation: %d\n", res.getCode());
+		System.out.printf("\tReservation: %d\n", res.getCode());
 		System.out.printf("\tFirst Name: %s\n", res.getFirst());
 		System.out.printf("\tLast Name: %s\n", res.getLast());
+		System.out.printf("\tLast Name: %.2f\n", res.getRate());
 		
 		if(res.getBegin() == ""){
-			System.out.printf("\t5: Range of Dates: \n"); 
+			System.out.printf("\tRange of Dates: \n"); 
 		}
 		else{
-			System.out.printf("\t5: Range of Dates: %s - %s\n", res.getBegin(), res.getEnd());
+			System.out.printf("\tRange of Dates: %s - %s\n", res.getBegin(), res.getEnd());
 		}
 
 		System.out.printf("\tNumber of Children: %d\n", res.getChildren());
-		System.out.printf("\tNumber of Adults: %d\n", res.getAdults());
+		System.out.printf("\tNumber of Adults: %d\n\n", res.getAdults());
 	}
 	
 	/* Requirement 5
