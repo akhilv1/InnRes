@@ -221,7 +221,7 @@ class Inn_Reservations{
 		statement += "'" + res.getRoom() + "', ";
 		statement += "'" + res.getCheckIn() + "', ";
 		statement += "'" + res.getCheckOut() + "', ";
-		statement += res.getRate() + ", "
+		statement += res.getRate() + ", ";
 		statement += "'" + res.getLast() + "', ";
 		statement += "'" + res.getFirst() + "', ";
 		statement += res.getAdults() + ", ";
