@@ -244,6 +244,8 @@ class Inn_Reservations{
 		System.out.printf("Total Cost: %.2f %nConfirm Reservation (Y/N):", res.getCost());
 		
 		//res.room
+		// TODO assign Room
+
 		
 		// Confirm Reservation
 		while(true){
