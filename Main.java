@@ -243,6 +243,8 @@ class Inn_Reservations{
 		print_res(res);
 		System.out.printf("Total Cost: %.2f %nConfirm Reservation (Y/N):", res.getCost());
 		
+		res.room
+		
 		// Confirm Reservation
 		while(true){
 			String input = reader.next();
@@ -774,14 +776,3 @@ class Inn_Reservations{
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
