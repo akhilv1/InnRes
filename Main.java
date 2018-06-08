@@ -67,8 +67,17 @@ class Inn_Reservations{
 	}
 
 	// Checks the date to confirm YYYY-MM-DD Format	
-	public static boolean checkDate(String Date){
-		//TODO write date format checking function
+	public static boolean checkDate(String date){
+		if(date.indexOf('-') != 4 || date.lastIndexOf('-') != 7){
+			return false;
+		}
+		String temp[] = date.split("-");
+		int year = Integer.parseInt(temp[1]);
+		int month = Integer.parseInt(temp[2]);
+		int day = Integer.parseInt(temp[3]);
+		if(year < 0 || year >  3000 || month < 0 || month > 12 || day < 0 || day > 31){
+			return false;
+		}
 		return true;
 	}
 		
