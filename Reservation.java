@@ -121,7 +121,26 @@ class Reservation{
 	
 	//Returns difference of two dates
 	private int getLength(String checkIn, String checkOut){
-		//TODO write function
+		String sql = "select DATEDIFF('" + checkIn + "', '" + checkOut + "') diff;";
+		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
+							   System.getenv("HP_JDBC_USER"),
+							   System.getenv("HP_JDBC_PW"))) {
+
+			try (Statement stmt = conn.createStatement();
+				 ResultSet rs = stmt.executeQuery(sql)) {
+				while(rs.next()){
+				    return rs.getInt("diff");
+				}
+			}
+			catch(SQLException e){
+				System.err.println("SQLException: " + e.getMessage());
+				return -1;
+			}
+		}
+		catch(SQLException e){
+			System.err.println("SQLException: " + e.getMessage());
+			return -1;
+		}
 		return 0;
 	}
 	
