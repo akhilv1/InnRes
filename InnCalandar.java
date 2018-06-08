@@ -1,10 +1,13 @@
+import java.sql.*;
+
 class InnCalandar {
 	
 	private boolean[] jan, feb, mar, apr, may, jun, jul, aug, sept, oct, nov, dec;
 	public int numRes = 0;
 	public int[] revenue;
+	String room = "";
 
-	public InnCalandar(){
+	public InnCalandar(String room){
 		jan = new boolean[31];
 		feb = new boolean[28];
 		mar = new boolean[31];
@@ -19,7 +22,40 @@ class InnCalandar {
 		dec = new boolean[31];
 
 		revenue = new int[13];
+		this.room = room;
+		
+		initCalandar();
 	}
+	
+	private boolean initCalandar(){
+		if(this.room == ""){
+			return false;
+		}
+		String sql = "select room, checkin, checkout from reservations where room = '" + this.room + "';";
+		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
+							   System.getenv("HP_JDBC_USER"),
+							   System.getenv("HP_JDBC_PW"))) {
+
+			try (Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(sql)) {
+				while(rs.next()){
+				    String in = rs.getString("checkin");
+					String out = rs.getString("checkout");
+					addDateRange(in, out);// Assume no overlapping dates from the database
+				}
+			}
+			catch(SQLException e){
+				System.err.println("SQLException: " + e.getMessage());
+				return false;
+			}
+		}
+		catch(SQLException e){
+			System.err.println("SQLException: " + e.getMessage());
+			return false;
+		}
+		
+		return true;
+	} 
 	
 	// Reserves date range and returns false on failure
 	boolean addDateRange(String start, String end){
@@ -191,7 +227,7 @@ class InnCalandar {
 	}
 	
 	// returns next vaccant date after input start
-	 public String nextVaccDate(String start){
+	public String nextVaccDate(String start){
 	 	boolean month[] = getMonthArr(start);
 	 	int currMonth = getMonth(start);
 	 	int currYear = getYear(start);

@@ -127,7 +127,7 @@ class Reservation{
 	
 	public float getRate(){
 		if(this.rate != -1)
-			return this.code;
+			return this.rate;
 		else{ // If unassigned, query the largest reservation number and increment it
 			String sql = "select baseprice from rooms where roomcode = '" + this.getRoom() + "';";
 			try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),

@@ -100,36 +100,54 @@ class Inn_Reservations{
 	 */
 
 	public static void req1(){
-		String sql = "select res.room room, length, beds, bedtype, maxocc, baseprice, pop, latest, length from (select res.room, DATEDIFF(checkout, checkin) length, max.latest from reservations res join (select room, max(checkout) latest from reservations group by Room) max on res.Room = max.room where res.checkout = max.latest) latest join (select room, beds, bedType, maxOcc, basePrice, (SUM(DATEDIFF(checkout, checkin)) / 180) as pop from rooms join reservations res on (rooms.RoomCode = res.room) where DATEDIFF('2010-10-23', checkin) < 180 group by room order by pop desc) res on res.room = latest.room;";
-			// TODO Freezes for whatever reason
-			try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
-								   System.getenv("HP_JDBC_USER"),
-								   System.getenv("HP_JDBC_PW"))) {
+		String sql = "select * from rooms";
+		System.out.println("Room\tRate\tPopularity\tLatest\tLength\t");
+		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
+			   System.getenv("HP_JDBC_USER"),
+			   System.getenv("HP_JDBC_PW"))) {
 
-				try (Statement stmt = conn.createStatement();
-					 ResultSet rs = stmt.executeQuery(sql)) {
-					while(rs.next()){ // Only returns the last reservation in  a list
-						Rooms room = new Rooms();
-						System.out.println("Room\tRate\tPopularity\tLatest\tLength\t");
-					    room.room = rs.getString("room");
-						room.rate = rs.getInt("baseprice");
-						room.popularity = rs.getFloat("pop");
-						room.latest = rs.getString("latest");
-						room.length = rs.getInt("length");	
-						room.maxOcc = rs.getInt("maxocc");
-						room.bed = rs.getString("bedtype");
-						room.numBeds = rs.getInt("beds");
-						
-						System.out.printf("%s\t%d\t%.2f\t%s\t%d%n", room.room, room.rate, room.popularity, room.latest, room.length);
-					}
+			try (Statement stmt = conn.createStatement();
+				 ResultSet rs = stmt.executeQuery(sql)) {
+				while(rs.next()){ // Only returns the last reservation in  a list
+					String roomcode = rs.getString("roomcode");
+					int rate = rs.getInt("baseprice");
+					int numBeds = rs.getInt("beds");
+					String bed = rs.getString("bedtype");
+					int maxOcc = rs.getInt("maxocc");
+//					System.out.printf("Room = %s, Rate = %d, Beds = %d, BedType = %s, MaxOcc = %d, ", roomcode, rate, numBeds, bed, maxOcc);
+					Rooms room = new Rooms(roomcode, rate, numBeds, bed, maxOcc);
+//					System.out.printf("Popularity = %.3f, Latest Stay = %s, Length = %d%n", room.getPopularity(), room.getLatest(), room.getLength());	
+					System.out.printf("%s\t%d\t%.2f\t\t%s\t%d%n", room.room, room.getRate(), room.getPopularity(), room.getLatest(), room.getLength());
 				}
-				catch(SQLException e){
-					System.err.println("SQLException: " + e.getMessage());
-				}
-			}
-			catch(SQLException e){
+			} catch(SQLException e){
 				System.err.println("SQLException: " + e.getMessage());
 			}
+		} catch(SQLException e){
+			System.err.println("SQLException: " + e.getMessage());
+		}
+//		String room = "aob";
+//		String sql = "select * from rooms where roomcode = '" + room + "';";
+//		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
+//							   System.getenv("HP_JDBC_USER"),
+//							   System.getenv("HP_JDBC_PW"))) {
+//
+//			try (Statement stmt = conn.createStatement();
+//				ResultSet rs = stmt.executeQuery(sql)) {
+//				while(rs.next()){
+//				    int rate = rs.getInt("baseprice");
+//					int numBeds = rs.getInt("beds");
+//					String bed = rs.getString("bedtype");
+//					int maxOcc = rs.getInt("maxocc");
+//					System.out.printf("Room = %s, Rate = %d, Beds = %d, BedType = %s, MaxOcc = %d", room, rate, numBeds, bed, maxOcc);
+//				}
+//			}
+//			catch(SQLException e){
+//				System.err.println("SQLException: " + e.getMessage());
+//			}
+//		}
+//		catch(SQLException e){
+//			System.err.println("SQLException: " + e.getMessage());
+//		}
 	}
 	
 	/* Requirement 2
@@ -781,8 +799,8 @@ class Inn_Reservations{
 				try (Statement stmt = conn.createStatement();
 					ResultSet rs = stmt.executeQuery(sql)) {
 					while(rs.next()){ // Only returns the last reservation in  a list
-						Rooms room = new Rooms();
-					    room.room = rs.getString("room");
+						String roomcode = rs.getString("room");
+						Rooms room = new Rooms(roomcode);
 						room.revenue = rs.getInt("Revenue");
 						
 						tempRooms.add(room);
