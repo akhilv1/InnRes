@@ -729,8 +729,6 @@ class Inn_Reservations{
 	public static void construct_req6_year_stats(){
 		String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", 
 						   "October", "Novemeber", "December"};
-
-
 		int year = request_year();
 
 		//construct sql statements for each month and the overall year 
@@ -741,24 +739,65 @@ class Inn_Reservations{
 		}
 		sqlStatements.add(contruct_req6_year_sql_statement(year));
 
+		ArrayList<Rooms> rooms = new ArrayList<Rooms>();
 		
 		//execute each statement in sqlStatements where index 0-11 are months and 12 is the yearly total 
 		for(int i = 0; i < sqlStatements.size(); i++){
-			pull_req6_month_stats(sqlStatements.get(i));
+			ArrayList<Rooms> tempRooms = pull_req6_month_stats(sqlStatements.get(i));
+
+			if(rooms.size() == 0){
+				rooms = tempRooms;
+			}
+
+			//get the revenue field of each room and save it in the  
+			//currect month of the permanent rooms list 
+			for(int j = 0; j < tempRooms.size(); j++){
+				//j is the current room index, i is the current month index 
+				rooms.get(j).cal.revenue[i] = tempRooms.get(j).revenue;
+			}
 		}
+
+		//print the revenues for the first room in the list 
+		System.out.println(rooms.get(0).room);
+
+		for(int i = 0; i < rooms.get(0).cal.revenue.length; i++){
+			System.out.println(rooms.get(i).cal.revenue[i]);
+		}
+
 	}
 
 	//execute a pull for monthly or yearly stats from the perameter sql statment 
-	public static void pull_req6_month_stats(String statement){
+	public static ArrayList<Rooms> pull_req6_month_stats(String sql){
+		ArrayList<Rooms> tempRooms = new ArrayList<Rooms>();
 
+		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
+								   System.getenv("HP_JDBC_USER"),
+								   System.getenv("HP_JDBC_PW"))) {
+				try (Statement stmt = conn.createStatement();
+					ResultSet rs = stmt.executeQuery(sql)) {
+					while(rs.next()){ // Only returns the last reservation in  a list
+						Rooms room = new Rooms();
+					    room.room = rs.getString("room");
+						room.revenue = rs.getInt("Revenue");
+						
+						tempRooms.add(room);
+					}
+				}
+				catch(SQLException e){
+				System.err.println("SQLException: " + e.getMessage());
+			}
+		}
+		catch(SQLException e){
+			System.err.println("SQLException: " + e.getMessage());
+		}
 
-
+		return tempRooms;
 	}
 
 	public static String contruct_req6_month_sql_statement(int year, String month){
-		String statement = "SELECT Room, round(Sum(Rate * DATEDIFF(checkout, checkin)), 0) ";
+		String statement = "SELECT Room, round(Sum(Rate * DATEDIFF(checkout, checkin)), 0) Revenue";
 
-		statement = statement + month + " FROM reservations"; 
+		statement = statement + " FROM reservations"; 
 		statement = statement + " WHERE date_format(Checkout, '%Y') = '" + year + "'";
 		statement = statement + "AND date_format(Checkout, '%M') = '" + month + "'";
 		statement = statement + "GROUP BY date_format(Checkout, '%M'), room"; 
@@ -766,7 +805,7 @@ class Inn_Reservations{
 	}
 
 	public static String contruct_req6_year_sql_statement(int year){
-		String statement = "SELECT Room, round(Sum(Rate * DATEDIFF(checkout, checkin)), 0) YearTotal";
+		String statement = "SELECT Room, round(Sum(Rate * DATEDIFF(checkout, checkin)), 0) Revenue";
 
 		statement = statement + " FROM reservations";
 		statement = statement + " WHERE date_format(Checkout, '%Y') = '" + year + "'";

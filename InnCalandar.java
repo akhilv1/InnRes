@@ -2,7 +2,8 @@ class InnCalandar {
 	
 	private boolean[] jan, feb, mar, apr, may, jun, jul, aug, sept, oct, nov, dec;
 	public int numRes = 0;
-	
+	public int[] revenue;
+
 	public InnCalandar(){
 		jan = new boolean[31];
 		feb = new boolean[28];
@@ -16,6 +17,8 @@ class InnCalandar {
 		oct = new boolean[31];
 		nov = new boolean[30];
 		dec = new boolean[31];
+
+		revenue = new int[13];
 	}
 	
 	// Reserves date range and returns false on failure
