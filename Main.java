@@ -29,7 +29,12 @@ class Inn_Reservations{
 				case 2: // TODO handle "Any" case by generating bed and room
 					System.out.println("Option 2: Make a Reservation");
 					res = req2();
+<<<<<<< HEAD
 					req2_confirm(res);
+=======
+					sql = contruct_req2_sql_statement(res);
+					//execSql(sql);
+>>>>>>> 2092f54feb767b517734417fcac29c735f26193c
 					System.out.println(sql);
 					break;
 				case 3:
@@ -55,6 +60,7 @@ class Inn_Reservations{
 				case 6:
 					System.out.println("Option 6: Inn Revenue");
 					System.out.println(contruct_req6_sql_statement());
+					construct_req6_year_stats();
 					break;
 				case 7:
 					System.out.println("Thank you for using the Inn Reservation System");
@@ -490,10 +496,17 @@ class Inn_Reservations{
 	
 	public static void print_res(Reservation res){
 		// Display Res Info
+<<<<<<< HEAD
 		System.out.printf("\tReservation:\t %d\n", res.getCode());
 		System.out.printf("\tFirst Name:\t %s\n", res.getFirst());
 		System.out.printf("\tLast Name:\t %s\n", res.getLast());
 		System.out.printf("\tRate:\t\t %.2f\n", res.getRate());
+=======
+		System.out.printf("\tReservation: %d\n", res.getCode());
+		System.out.printf("\tFirst Name: %s\n", res.getFirst());
+		System.out.printf("\tLast Name: --%s--\n", res.getLast());
+		System.out.printf("\tLast Name: %.2f\n", res.getRate());
+>>>>>>> 2092f54feb767b517734417fcac29c735f26193c
 		
 		if(res.getCheckIn() == ""){
 			System.out.printf("\tRange of Dates: \n"); 
@@ -702,9 +715,71 @@ class Inn_Reservations{
 	 * Revenue Info
 	 */
 	
-	public static String contruct_req6_sql_statement(){
-		String statement = "SELECT * FROM reservations"; 
-			
+	public static int request_year(){
+		System.out.print("What year would you like stats for? (YYYY): ");
+		Scanner reader = new Scanner (System.in);
+		return reader.nextInt();
+	}
+
+
+	public static void construct_req6_year_stats(){
+		String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", 
+						   "October", "Novemeber", "December"};
+
+
+		int year = request_year();
+
+		//construct sql statements for each month and the overall year 
+		//each sql statement is added to sqlStatements
+		ArrayList<String> sqlStatements = new ArrayList<String>();
+		for(int i = 0; i < months.length; i++){
+			sqlStatements.add(contruct_req6_month_sql_statement(year, months[i]));
+		}
+		sqlStatements.add(contruct_req6_year_sql_statement(year));
+
+		
+		//execute each statement in sqlStatements where index 0-11 are months and 12 is the yearly total 
+		for(int i = 0; i < sqlStatements.size(); i++){
+			pull_req6_month_stats(sqlStatements.get(i));
+		}
+	}
+
+	//execute a pull for monthly or yearly stats from the perameter sql statment 
+	public static void pull_req6_month_stats(String statement){
+
+
+
+	}
+
+	public static String contruct_req6_month_sql_statement(int year, String month){
+		String statement = "SELECT Room, round(Sum(Rate * DATEDIFF(checkout, checkin)), 0) ";
+
+		statement = statement + month + " FROM reservations"; 
+		statement = statement + " WHERE date_format(Checkout, '%Y') = '" + year + "'";
+		statement = statement + "AND date_format(Checkout, '%M') = '" + month + "'";
+		statement = statement + "GROUP BY date_format(Checkout, '%M'), room"; 
 		return statement + ";";
 	}
+
+	public static String contruct_req6_year_sql_statement(int year){
+		String statement = "SELECT Room, round(Sum(Rate * DATEDIFF(checkout, checkin)), 0) YearTotal";
+
+		statement = statement + " FROM reservations";
+		statement = statement + " WHERE date_format(Checkout, '%Y') = '" + year + "'";
+		statement = statement + "GROUP BY date_format(Checkout, '%Y'), room"; 
+		return statement + ";";
+	}
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
