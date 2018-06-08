@@ -253,7 +253,7 @@ class Inn_Reservations{
 				return false;
 			}
 			else{
-				System.out.println("Invalid Input%nConfirm Reservation (Y/N):");
+				System.out.println("Invalid Input/nConfirm Reservation (Y/N):");
 			}
 		}
 	}
@@ -426,7 +426,7 @@ class Inn_Reservations{
 				return false;
 			}
 			else{
-				System.out.println("Invalid Input%nConfirm Reservation (Y/N):");
+				System.out.println("Invalid Input/nConfirm Reservation (Y/N):");
 			}
 		}
 	}
