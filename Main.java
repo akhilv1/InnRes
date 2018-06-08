@@ -750,13 +750,6 @@ class Inn_Reservations{
 			}
 		}
 
-		//print the revenues for the first room in the list 
-		// System.out.println(rooms.get(0).room);
-
-		for(int i = 0; i < rooms.get(0).cal.revenue.length; i++){
-			System.out.println(rooms.get(0).cal.revenue[i]);
-		}
-
 		print_revenue(rooms);
 
 	}
@@ -766,7 +759,7 @@ class Inn_Reservations{
 		System.out.println("Room\tJan\tFeb\tMar\tApr\tMay\tJun\tJul\tAug\tSep\tOct\tNov\tDec\tTotal");
 		for(int i = 0; i < rooms.size(); i++){
 			int[] rev = rooms.get(i).cal.revenue;
-			System.out.printf("%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d", 
+			System.out.printf("%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d%n", 
 				rooms.get(i).room, rev[0], rev[1], rev[2], rev[3], rev[4], rev[5], rev[6], rev[7], 
 				rev[8], rev[9], rev[10], rev[11], rev[12]);
 		}
