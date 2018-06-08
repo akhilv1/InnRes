@@ -286,7 +286,7 @@ class Inn_Reservations{
 		Scanner reader = new Scanner (System.in);
 		String userInput;
 
-		System.out.println("Please enter your reservation code to edit:");
+		System.out.print("Please enter your reservation code to edit:");
 		int code = reader.nextInt();
 		res = fetch_res(code);
 
@@ -373,13 +373,13 @@ class Inn_Reservations{
 	}
 
 	public static String contruct_req3_sql_statement(Reservation res){
-		String statement = "UPDATE Reservations SET ";
+		String statement = "UPDATE reservations SET ";
 		
 		statement += "FirstName = '" + res.getFirst() + "', ";
 		statement += "LastName = '" + res.getLast() + "', ";
 		statement += "CheckIn = '" + res.getCheckIn() + "', ";
 		statement += "CheckOut = '" + res.getCheckOut() + "', ";
-		statement += "Children = " + res.getChildren() + ", ";
+		statement += "Kids = " + res.getChildren() + ", ";
 		statement += "Adults = " + res.getAdults();
 		statement += " WHERE Code = " + res.getCode();
 		
@@ -391,11 +391,17 @@ class Inn_Reservations{
 	 */
 
 	public static String req4(){
-		System.out.println("Please enter your reservation code to cancel:");
+		
+		System.out.print("Please enter your reservation code to cancel:");
 		Scanner reader = new Scanner (System.in);
+		int code = 0;
 		// Get Res Info
-
-		int code = reader.nextInt();
+		try{
+			code = reader.nextInt();
+		} catch (Exception InputMismatchException) {
+			System.out.println("Invalid Type");
+			return "";
+		} 
 		Reservation res = fetch_res(code);
 		res.code = code; 
 		
