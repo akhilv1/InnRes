@@ -227,6 +227,33 @@ class Inn_Reservations{
 		return input; 
 	}
 	
+	public static ArrayList<Rooms> pull_req2_room_reservations(String sql){
+		ArrayList<Rooms> tempRooms = new ArrayList<Rooms>();
+
+		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
+								   System.getenv("HP_JDBC_USER"),
+								   System.getenv("HP_JDBC_PW"))) {
+				try (Statement stmt = conn.createStatement();
+					ResultSet rs = stmt.executeQuery(sql)) {
+					while(rs.next()){ // Only returns the last reservation in  a list
+						String roomcode = rs.getString("room");
+						Rooms room = new Rooms(roomcode);
+						room.revenue = rs.getInt("Revenue");
+						
+						tempRooms.add(room);
+					}
+				}
+				catch(SQLException e){
+				System.err.println("SQLException: " + e.getMessage());
+			}
+		}
+		catch(SQLException e){
+			System.err.println("SQLException: " + e.getMessage());
+		}
+
+		return tempRooms;
+	}
+
 	public static boolean req2_confirm(Reservation res){
 		Scanner reader = new Scanner (System.in);
 		print_res(res);
