@@ -23,11 +23,10 @@ class InnCalandar {
 
 		revenue = new int[13];
 		this.room = room;
-		
-		initCalandar();
 	}
 	
-	private boolean initCalandar(){
+	// Grabs reservation date range data, adds it to the appropriate month
+	public boolean initCalandar(){
 		if(this.room == ""){
 			return false;
 		}
@@ -41,6 +40,7 @@ class InnCalandar {
 				while(rs.next()){
 				    String in = rs.getString("checkin");
 					String out = rs.getString("checkout");
+					System.out.printf("Room = %s, CheckIn = %s, CheckOut = %s\n", this.room, in, out);
 					addDateRange(in, out);// Assume no overlapping dates from the database
 				}
 			}
@@ -57,6 +57,7 @@ class InnCalandar {
 		return true;
 	} 
 	
+	// TODO fix Hang
 	// Reserves date range and returns false on failure
 	boolean addDateRange(String start, String end){
 		if(!checkDate(start, end)){ // Requested full days

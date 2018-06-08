@@ -27,6 +27,7 @@ class Inn_Reservations{
 					req1();
 				    break;
 				case 2: // TODO handle "Any" case by generating bed and room
+					// TODO calculate cost based on number of weekdays and weekends
 					System.out.println("Option 2: Make a Reservation");
 					res = req2();
 					req2_confirm(res);
@@ -98,7 +99,7 @@ class Inn_Reservations{
 	/* Requirement 1
 	 * Rooms and Rates
 	 */
-
+	// TODO Sort by Popularity, next available check in date
 	public static void req1(){
 		String sql = "select * from rooms";
 		System.out.println("Room\tRate\tPopularity\tLatest\t\tLength\t");
@@ -296,7 +297,6 @@ class Inn_Reservations{
 					res.last = reader.nextLine();
 					break;
 				case 3: //Date Range, Start Date = inputs(2), End Date = inputs(3)
-					// TODO (OPTIONAL)type checking
 					System.out.print("Enter a Start Date (YYYY-MM-DD): ");
 					res.checkIn = reader.nextLine();
 

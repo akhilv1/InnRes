@@ -24,6 +24,8 @@ class Rooms{
 		this.revenue = 0;
 		
 		this.cal = new InnCalandar(this.room);
+		// TODO calandar init currently breaks R6
+//		this.cal.initCalandar(); // Needed for R2 room availability checking
 	}
 	
 	public Rooms(String roomcode, int rate, int numBeds, String bed, int maxOcc){
@@ -84,12 +86,12 @@ class Rooms{
 		}
 	}
 	
-	// Returns latest checkout date of current room, if not available, queries SQL
+	// Returns latest checkout date before CURDATE of current room, if not available, queries SQL
 	public String getLatest(){
 		if(this.latest != "")
 			return this.latest;
 		else{
-			String sql = "select res.room, DATEDIFF(checkout, checkin) length, max.latest from reservations res join (select room, max(checkout) latest from reservations group by Room) max on res.Room = max.room where res.checkout = max.latest && res.room = '" + this.room + "';";
+			String sql = "select res.room, DATEDIFF(checkout, checkin) length, max.latest from reservations res join (select room, max(checkout) latest from reservations where checkout < CURDATE() group by Room) max on res.Room = max.room where res.checkout = max.latest && res.room = '" + this.room + "';";
 			try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
 								   System.getenv("HP_JDBC_USER"),
 								   System.getenv("HP_JDBC_PW"))) {
