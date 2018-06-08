@@ -29,12 +29,9 @@ class Inn_Reservations{
 				case 2: // TODO handle "Any" case by generating bed and room
 					System.out.println("Option 2: Make a Reservation");
 					res = req2();
-<<<<<<< HEAD
 					req2_confirm(res);
-=======
 					sql = contruct_req2_sql_statement(res);
 					//execSql(sql);
->>>>>>> 2092f54feb767b517734417fcac29c735f26193c
 					System.out.println(sql);
 					break;
 				case 3:
@@ -59,7 +56,6 @@ class Inn_Reservations{
 				   	break;
 				case 6:
 					System.out.println("Option 6: Inn Revenue");
-					System.out.println(contruct_req6_sql_statement());
 					construct_req6_year_stats();
 					break;
 				case 7:
@@ -496,17 +492,14 @@ class Inn_Reservations{
 	
 	public static void print_res(Reservation res){
 		// Display Res Info
-<<<<<<< HEAD
 		System.out.printf("\tReservation:\t %d\n", res.getCode());
 		System.out.printf("\tFirst Name:\t %s\n", res.getFirst());
 		System.out.printf("\tLast Name:\t %s\n", res.getLast());
 		System.out.printf("\tRate:\t\t %.2f\n", res.getRate());
-=======
 		System.out.printf("\tReservation: %d\n", res.getCode());
 		System.out.printf("\tFirst Name: %s\n", res.getFirst());
 		System.out.printf("\tLast Name: --%s--\n", res.getLast());
 		System.out.printf("\tLast Name: %.2f\n", res.getRate());
->>>>>>> 2092f54feb767b517734417fcac29c735f26193c
 		
 		if(res.getCheckIn() == ""){
 			System.out.printf("\tRange of Dates: \n"); 
