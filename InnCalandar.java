@@ -29,7 +29,7 @@ class InnCalandar {
 		
 		boolean month[] = getMonthArr(start);
 		if(getMonth(start) != getMonth(end)){
-			int day = getDay(start);
+			int day = getDay(start) - 1;
 			while(day < month.length){ // Books dates
 				month[day] = true;
 			}
@@ -41,7 +41,7 @@ class InnCalandar {
 			return true;
 		}
 		else{
-			int day = getDay(start);
+			int day = getDay(start) - 1;
 			month = getMonthArr(start);
 			while(day < (getDay(end) - 1)){
 				month[day] = true;
@@ -55,7 +55,7 @@ class InnCalandar {
 		boolean month[] = getMonthArr(start);
 		if(getMonth(start) != getMonth(end)){
 			boolean ret = false;
-			int day = getDay(start);
+			int day = getDay(start) - 1;
 			while(day < month.length){ // Books dates
 				ret = ret & month[day]; // Ret will be true if there are any booked days
 			}
@@ -67,7 +67,7 @@ class InnCalandar {
 			return !ret; // if vacant, returns true
 		}
 		else{
-			int day = getDay(start);
+			int day = getDay(start) - 1;
 			month = getMonthArr(start);
 			while(day < (getDay(end) - 1)){
 				month[day] = true;
@@ -84,7 +84,7 @@ class InnCalandar {
 		
 		boolean month[] = getMonthArr(start);
 		if(getMonth(start) != getMonth(end)){
-			int day = getDay(start);
+			int day = getDay(start) - 1;
 			while(day < month.length){ // removes dates
 				month[day] = false;
 			}
@@ -96,7 +96,7 @@ class InnCalandar {
 			return true;
 		}
 		else{
-			int day = getDay(start);
+			int day = getDay(start) - 1;
 			month = getMonthArr(start);
 			while(day < (getDay(end) - 1)){
 				month[day] = true;
@@ -167,10 +167,12 @@ class InnCalandar {
 		return null;
 	}
 	
-	public int getRevenue(int index){
-		return revenue[index];
+	// Returns the YYYY part of the YYYY-MM-DD format
+	private int getYear(String date){
+		String temp[] = date.split("-");
+		return Integer.parseInt(temp[0]);
 	}
-
+	
 	// Returns the MM part of the YYYY-MM-DD format
 	private int getMonth(String date){
 		String temp[] = date.split("-");
@@ -190,6 +192,23 @@ class InnCalandar {
 	
 	// returns next vaccant date after input start
 	public String nextVaccDate(String start){
+		boolean month[] = getMonthArr(start);
+		int currMonth = getMonth(start);
+		int currYear = getYear(start);
+		int day = getDay(start) - 1;
+		
+		while(true){
+			while(day < month.length){
+				if(month[day] == false)
+					return getYear(start)
+				day ++;
+			}
+			if(currMonth == 12){
+				currYear ++;
+				currMonth = 1;
+			}
+			month = getMonthArr(currMonth);
+		}
 		return "";
 	}
 }
