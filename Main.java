@@ -41,7 +41,9 @@ class Inn_Reservations{
 				    break;
 				case 4:
 					System.out.println("Option 4: Cancel a Reservation");
-					System.out.println(req4());
+					sql = req4();
+					req4_confirm(sql);
+					System.out.println(sql);
 					break;
 				case 5:
 					System.out.println("Option 5: About a Reservation\n");
@@ -64,6 +66,7 @@ class Inn_Reservations{
 
 	// Checks the date to confirm YYYY-MM-DD Format	
 	public static boolean checkDate(String Date){
+		//TODO write date format checking function
 		return true;
 	}
 		
@@ -92,7 +95,7 @@ class Inn_Reservations{
 
 	public static void req1(){
 		String sql = "select res.room room, length, beds, bedtype, maxocc, baseprice, pop, latest, length from (select res.room, DATEDIFF(checkout, checkin) length, max.latest from reservations res join (select room, max(checkout) latest from reservations group by Room) max on res.Room = max.room where res.checkout = max.latest) latest join (select room, beds, bedType, maxOcc, basePrice, (SUM(DATEDIFF(checkout, checkin)) / 180) as pop from rooms join reservations res on (rooms.RoomCode = res.room) where DATEDIFF('2010-10-23', checkin) < 180 group by room order by pop desc) res on res.room = latest.room;";
-			// Freezes for whatever reason
+			// TODO Freezes for whatever reason
 			try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
 								   System.getenv("HP_JDBC_USER"),
 								   System.getenv("HP_JDBC_PW"))) {
@@ -245,7 +248,7 @@ class Inn_Reservations{
 		}
 	}
 
-	// TODO handle any case and display options if no matches found
+	// TODO handle any case and display options if no matches found (use next available date from 1
 	// TODO check date availability
 	public static String contruct_req2_sql_statement(Reservation res){
 		String statement = "INSERT INTO Reservations (Code, Room, CheckIn, CheckOut, Rate, LastName, FirstName, Adults, Kids) VALUES (";
@@ -290,7 +293,7 @@ class Inn_Reservations{
 					res.last = reader.nextLine();
 					break;
 				case 3: //Date Range, Start Date = inputs(2), End Date = inputs(3)
-					// TODO type checking
+					// TODO (OPTIONAL)type checking
 					System.out.print("Enter a Start Date (YYYY-MM-DD): ");
 					res.checkIn = reader.nextLine();
 
@@ -377,7 +380,7 @@ class Inn_Reservations{
 	 * Reservation Cancellation
 	 */
 
-	public static boolean req4(){
+	public static String req4(){
 		System.out.println("Please enter your reservation code to cancel:");
 		Scanner reader = new Scanner (System.in);
 		// Get Res Info
@@ -385,25 +388,29 @@ class Inn_Reservations{
 		int code = reader.nextInt();
 		Reservation res = fetch_res(code);
 		res.code = code; 
-
-		// Display Res Info
+		
+		String statement = "DELETE FROM Reservations ";
+		statement += "WHERE Code = " + res.getCode()+ ";";
 		print_res(res);
+		return statement;
+	}
+	
+	public static boolean req4_confirm(String sql){
+		Scanner reader = new Scanner (System.in);
 		System.out.print("Confirm Cancellation (Y/N): ");
 		
-		// Confirm Cancellation
+		// Confirm Reservation
 		while(true){
 			String input = reader.next();
 			if(input.charAt(0) == 'Y' || input.charAt(0) == 'y'){
-				String statement = "DELETE FROM Reservations ";
-				statement += "WHERE Code = " + res.getCode()+ ";";
-				execSql(statement);
+				execSql(sql);
 				return true;
 			}
 			else if(input.charAt(0) == 'N' || input.charAt(0) == 'n'){
 				return false;
 			}
 			else{
-				System.out.println("Invalid Input%nConfirm Cancellation (Y/N):");
+				System.out.println("Invalid Input%nConfirm Reservation (Y/N):");
 			}
 		}
 	}

@@ -7,6 +7,7 @@ class Rooms{
 	int maxOcc;
 	String bed;
 	int numBeds;
+	InnCalandar cal;
 	
 	public Rooms(){
 		this.room = "";
@@ -17,6 +18,7 @@ class Rooms{
 		this.maxOcc = 0;
 		this.bed = "";
 		this.numBeds = 0;
+		InnCalandar cal = new InnCalandar();
 	}
 	
 	// TODO add date finding functions for reservations
