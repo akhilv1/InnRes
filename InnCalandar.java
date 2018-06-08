@@ -197,7 +197,7 @@ class InnCalandar {
 		while(true){
 			while(day < month.length){
 				if(month[day] == false)
-					return getYear(start)
+					return getYear(start) + "-";
 				day ++;
 			}
 			if(currMonth == 12){
@@ -206,6 +206,5 @@ class InnCalandar {
 			}
 			month = getMonthArr(currMonth);
 		}
-		return "";
 	}
 }
