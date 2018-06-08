@@ -238,7 +238,9 @@ class Inn_Reservations{
 		print_res(res);
 		System.out.printf("Total Cost: %.2f %nConfirm Reservation (Y/N):", res.getCost());
 		
+		//res.room
 		// TODO assign Room
+
 		
 		// Confirm Reservation
 		while(true){
@@ -719,7 +721,7 @@ class Inn_Reservations{
 
 	public static void construct_req6_year_stats(){
 		String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", 
-						   "October", "Novemeber", "December"};
+						   "October", "November", "December"};
 		int year = request_year();
 
 		//construct sql statements for each month and the overall year 
@@ -749,12 +751,25 @@ class Inn_Reservations{
 		}
 
 		//print the revenues for the first room in the list 
-		System.out.println(rooms.get(0).room);
+		// System.out.println(rooms.get(0).room);
 
 		for(int i = 0; i < rooms.get(0).cal.revenue.length; i++){
 			System.out.println(rooms.get(0).cal.revenue[i]);
 		}
 
+		print_revenue(rooms);
+
+	}
+
+
+	public static void print_revenue(ArrayList<Rooms> rooms){
+		System.out.println("Room\tJan\tFeb\tMar\tApr\tMay\tJun\tJul\tAug\tSep\tOct\tNov\tDec\tTotal");
+		for(int i = 0; i < rooms.size(); i++){
+			int[] rev = rooms.get(i).cal.revenue;
+			System.out.printf("%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d", 
+				rooms.get(i).room, rev[0], rev[1], rev[2], rev[3], rev[4], rev[5], rev[6], rev[7], 
+				rev[8], rev[9], rev[10], rev[11], rev[12]);
+		}
 	}
 
 	//execute a pull for monthly or yearly stats from the perameter sql statment 
