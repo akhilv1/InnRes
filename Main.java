@@ -101,7 +101,7 @@ class Inn_Reservations{
 
 	public static void req1(){
 		String sql = "select * from rooms";
-		System.out.println("Room\tRate\tPopularity\tLatest\tLength\t");
+		System.out.println("Room\tRate\tPopularity\tLatest\t\tLength\t");
 		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
 			   System.getenv("HP_JDBC_USER"),
 			   System.getenv("HP_JDBC_PW"))) {
@@ -114,9 +114,7 @@ class Inn_Reservations{
 					int numBeds = rs.getInt("beds");
 					String bed = rs.getString("bedtype");
 					int maxOcc = rs.getInt("maxocc");
-//					System.out.printf("Room = %s, Rate = %d, Beds = %d, BedType = %s, MaxOcc = %d, ", roomcode, rate, numBeds, bed, maxOcc);
 					Rooms room = new Rooms(roomcode, rate, numBeds, bed, maxOcc);
-//					System.out.printf("Popularity = %.3f, Latest Stay = %s, Length = %d%n", room.getPopularity(), room.getLatest(), room.getLength());	
 					System.out.printf("%s\t%d\t%.2f\t\t%s\t%d%n", room.room, room.getRate(), room.getPopularity(), room.getLatest(), room.getLength());
 				}
 			} catch(SQLException e){
@@ -125,29 +123,6 @@ class Inn_Reservations{
 		} catch(SQLException e){
 			System.err.println("SQLException: " + e.getMessage());
 		}
-//		String room = "aob";
-//		String sql = "select * from rooms where roomcode = '" + room + "';";
-//		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
-//							   System.getenv("HP_JDBC_USER"),
-//							   System.getenv("HP_JDBC_PW"))) {
-//
-//			try (Statement stmt = conn.createStatement();
-//				ResultSet rs = stmt.executeQuery(sql)) {
-//				while(rs.next()){
-//				    int rate = rs.getInt("baseprice");
-//					int numBeds = rs.getInt("beds");
-//					String bed = rs.getString("bedtype");
-//					int maxOcc = rs.getInt("maxocc");
-//					System.out.printf("Room = %s, Rate = %d, Beds = %d, BedType = %s, MaxOcc = %d", room, rate, numBeds, bed, maxOcc);
-//				}
-//			}
-//			catch(SQLException e){
-//				System.err.println("SQLException: " + e.getMessage());
-//			}
-//		}
-//		catch(SQLException e){
-//			System.err.println("SQLException: " + e.getMessage());
-//		}
 	}
 	
 	/* Requirement 2
