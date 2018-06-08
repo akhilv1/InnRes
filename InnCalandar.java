@@ -191,24 +191,24 @@ class InnCalandar {
 	}
 	
 	// returns next vaccant date after input start
-	public String nextVaccDate(String start){
-		boolean month[] = getMonthArr(start);
-		int currMonth = getMonth(start);
-		int currYear = getYear(start);
-		int day = getDay(start) - 1;
+	// public String nextVaccDate(String start){
+	// 	boolean month[] = getMonthArr(start);
+	// 	int currMonth = getMonth(start);
+	// 	int currYear = getYear(start);
+	// 	int day = getDay(start) - 1;
 		
-		while(true){
-			while(day < month.length){
-				if(month[day] == false)
-					return getYear(start)
-				day ++;
-			}
-			if(currMonth == 12){
-				currYear ++;
-				currMonth = 1;
-			}
-			month = getMonthArr(currMonth);
-		}
-		return "";
-	}
+	// 	while(true){
+	// 		while(day < month.length){
+	// 			if(month[day] == false)
+	// 				return getYear(start);
+	// 			day ++;
+	// 		}
+	// 		if(currMonth == 12){
+	// 			currYear ++;
+	// 			currMonth = 1;
+	// 		}
+	// 		month = getMonthArr(currMonth);
+	// 	}
+	// 	return "";
+	// }
 }
