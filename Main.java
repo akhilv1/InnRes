@@ -30,28 +30,22 @@ class Inn_Reservations{
 					System.out.println("Option 2: Make a Reservation");
 					res = req2();
 					req2_confirm(res);
-					sql = contruct_req2_sql_statement(res);
-					//execSql(sql);
-					System.out.println(sql);
 					break;
 				case 3:
 					System.out.println("Option 3: Change a Reservation");
 					res = req3();
 					sql = contruct_req3_sql_statement(res);
 					execSql(sql);
-					System.out.println(sql);
 				    break;
 				case 4:
 					System.out.println("Option 4: Cancel a Reservation");
 					sql = req4();
 					req4_confirm(sql);
-					System.out.println(sql);
 					break;
 				case 5:
 					System.out.println("Option 5: About a Reservation\n");
 					inputs = req5();
 					sql = contruct_req5_sql_statement(inputs);
-					System.out.println(sql);
 					fetch_res(sql);
 				   	break;
 				case 6:
@@ -68,20 +62,21 @@ class Inn_Reservations{
 
 	// Checks the date to confirm YYYY-MM-DD Format	
 	public static boolean checkDate(String date){
-		if(date.indexOf('-') != 4 || date.lastIndexOf('-') != 7){
-			return false;
+		if(date.indexOf('-') == 4 && date.lastIndexOf('-') == 7){
+			String temp[] = date.split("-");
+			int year = Integer.parseInt(temp[0]);
+			int month = Integer.parseInt(temp[1]);
+			int day = Integer.parseInt(temp[2]);
+			if(year < 0 || year >  3000 || month < 0 || month > 12 || day < 0 || day > 31){
+				return false;
+			}
+			return true;
 		}
-		String temp[] = date.split("-");
-		int year = Integer.parseInt(temp[1]);
-		int month = Integer.parseInt(temp[2]);
-		int day = Integer.parseInt(temp[3]);
-		if(year < 0 || year >  3000 || month < 0 || month > 12 || day < 0 || day > 31){
-			return false;
-		}
-		return true;
+		return false;
 	}
 		
 	public static boolean execSql(String sql){
+		System.out.println("ExecSql " + sql);
 		try (Connection conn = DriverManager.getConnection(System.getenv("HP_JDBC_URL"),
 								   System.getenv("HP_JDBC_USER"),
 								   System.getenv("HP_JDBC_PW"))) {
@@ -264,7 +259,7 @@ class Inn_Reservations{
 	// TODO handle any case and display options if no matches found (use next available date from 1
 	// TODO check date availability
 	public static String contruct_req2_sql_statement(Reservation res){
-		String statement = "INSERT INTO Reservations (Code, Room, CheckIn, CheckOut, Rate, LastName, FirstName, Adults, Kids) VALUES (";
+		String statement = "INSERT INTO reservations (Code, Room, CheckIn, CheckOut, Rate, LastName, FirstName, Adults, Kids) VALUES (";
 		
 		statement += res.getCode() + ", ";
 		statement += "'" + res.getRoom() + "', ";
@@ -402,7 +397,7 @@ class Inn_Reservations{
 		Reservation res = fetch_res(code);
 		res.code = code; 
 		
-		String statement = "DELETE FROM Reservations ";
+		String statement = "DELETE FROM reservations ";
 		statement += "WHERE Code = " + res.getCode()+ ";";
 		print_res(res);
 		return statement;
@@ -507,10 +502,6 @@ class Inn_Reservations{
 		System.out.printf("\tFirst Name:\t %s\n", res.getFirst());
 		System.out.printf("\tLast Name:\t %s\n", res.getLast());
 		System.out.printf("\tRate:\t\t %.2f\n", res.getRate());
-		System.out.printf("\tReservation: %d\n", res.getCode());
-		System.out.printf("\tFirst Name: %s\n", res.getFirst());
-		System.out.printf("\tLast Name: --%s--\n", res.getLast());
-		System.out.printf("\tLast Name: %.2f\n", res.getRate());
 		
 		if(res.getCheckIn() == ""){
 			System.out.printf("\tRange of Dates: \n"); 
@@ -761,7 +752,7 @@ class Inn_Reservations{
 		System.out.println(rooms.get(0).room);
 
 		for(int i = 0; i < rooms.get(0).cal.revenue.length; i++){
-			System.out.println(rooms.get(i).cal.revenue[i]);
+			System.out.println(rooms.get(0).cal.revenue[i]);
 		}
 
 	}
